@@ -136,6 +136,13 @@ function ProjectCard({
       <div className="text-left">
         <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal]">{project.title}</p>
       </div>
+      {project.description && (
+        <div className="text-left">
+          <p className="text-[11px] text-[#939393] leading-[normal] tracking-[0]" style={{ fontFamily: "Roboto Mono, monospace" }}>
+            {project.description}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

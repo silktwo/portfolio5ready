@@ -187,7 +187,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
-              {caseProject.projectTitle}
+              {caseProject.projectTitle.toUpperCase()}
             </button>
             <button
               onClick={() => scrollToSection("info")}
@@ -317,7 +317,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
-                      <div className="w-full">
+                      <div className="w-full" style={{ margin: 0, padding: 0 }}>
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 2}`}
@@ -390,7 +390,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
-                      <div className="w-full">
+                      <div className="w-full" style={{ margin: 0, padding: 0 }}>
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}

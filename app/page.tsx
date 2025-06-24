@@ -20,7 +20,7 @@ function ProjectCard({ project, className = "", onClick }: { project: CaseProjec
   }
 
   // Use introImage as thumbnail if available, otherwise fallback to placeholder
-  const thumbnailImage = project.introImage || "/placeholder.svg?height=300&width=400"
+  const thumbnailImage = project.introImage || project.thumbnail || "/placeholder.svg?height=300&width=400"
 
   // Format title with category tags
   const displayTitle = project.categoryTags.length > 0 
