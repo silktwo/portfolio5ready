@@ -1,9 +1,9 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
 import Navigation from "@/components/navigation"
 import BackToTop from "@/components/back-to-top"
-import { getPersonalProjects } from "@/lib/notion-projects"
 
 interface PersonalProject {
   id: string
@@ -12,6 +12,52 @@ interface PersonalProject {
   image: string
   height?: string
 }
+
+// Personal Projects CMS Data
+const personalProjects: PersonalProject[] = [
+  {
+    id: "1",
+    title: "METAL-GEAR.EXE",
+    slug: "metal-gear-exe",
+    image: "https://via.placeholder.com/400x600/000000/FFFFFF?text=METAL-GEAR.EXE",
+    height: "300px",
+  },
+  {
+    id: "2",
+    title: "NEURAL NETWORKS",
+    slug: "neural-networks",
+    image: "https://via.placeholder.com/400x500/333333/FFFFFF?text=NEURAL+NETWORKS",
+    height: "250px",
+  },
+  {
+    id: "3",
+    title: "DIGITAL SCULPTURES",
+    slug: "digital-sculptures",
+    image: "https://via.placeholder.com/400x700/666666/FFFFFF?text=DIGITAL+SCULPTURES",
+    height: "350px",
+  },
+  {
+    id: "4",
+    title: "CODE POETRY",
+    slug: "code-poetry",
+    image: "https://via.placeholder.com/400x400/999999/FFFFFF?text=CODE+POETRY",
+    height: "200px",
+  },
+  {
+    id: "5",
+    title: "GENERATIVE ART",
+    slug: "generative-art",
+    image: "https://via.placeholder.com/400x550/CCCCCC/000000?text=GENERATIVE+ART",
+    height: "275px",
+  },
+  {
+    id: "6",
+    title: "EXPERIMENTAL UI",
+    slug: "experimental-ui",
+    image: "https://via.placeholder.com/400x450/EEEEEE/000000?text=EXPERIMENTAL+UI",
+    height: "225px",
+  },
+]
 
 // Project Card Component
 function ProjectCard({ project, className = "" }: { project: PersonalProject; className?: string }) {
@@ -62,68 +108,18 @@ function ProjectCard({ project, className = "" }: { project: PersonalProject; cl
 }
 
 export default function PersonalProjectsPage() {
-  const [projects, setProjects] = useState<PersonalProject[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true)
-        const data = await getPersonalProjects()
-        setProjects(data)
-        setError(null)
-      } catch (error) {
-        console.error("Error fetching personal projects:", error)
-        setError("Failed to load projects")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProjects()
     window.scrollTo(0, 0)
   }, [])
 
   // Distribute projects into columns for desktop layout
   const getColumnProjects = (columnIndex: number, totalColumns: number) => {
-    return projects.filter((_, index) => index % totalColumns === columnIndex)
+    return personalProjects.filter((_, index) => index % totalColumns === columnIndex)
   }
 
   const column1 = getColumnProjects(0, 3)
   const column2 = getColumnProjects(1, 3)
   const column3 = getColumnProjects(2, 3)
-
-  if (loading) {
-    return (
-      <div className="bg-white min-h-screen overflow-x-hidden">
-        <div className="w-[calc(100%-40px)] sm:w-[calc(100%-60px)] mx-[20px] sm:mx-[30px] py-[30px]">
-          <div className="mb-4">
-            <Navigation />
-          </div>
-          <div className="flex items-center justify-center h-64">
-            <div className="text-gray-500">Loading...</div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="bg-white min-h-screen overflow-x-hidden">
-        <div className="w-[calc(100%-40px)] sm:w-[calc(100%-60px)] mx-[20px] sm:mx-[30px] py-[30px]">
-          <div className="mb-4">
-            <Navigation />
-          </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Error Loading Projects</h1>
-            <p className="text-gray-600">{error}</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="bg-white min-h-screen overflow-x-hidden">
@@ -142,55 +138,49 @@ export default function PersonalProjectsPage() {
         </div>
 
         {/* Projects Grid */}
-        {projects.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No projects available</p>
+        <>
+          {/* Mobile: Single column */}
+          <div className="block sm:hidden">
+            <div className="flex flex-col gap-[8px]">
+              {personalProjects.map((project, index) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
           </div>
-        ) : (
-          <>
-            {/* Mobile: Single column */}
-            <div className="block sm:hidden">
-              <div className="flex flex-col gap-[8px]">
-                {projects.map((project, index) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            </div>
 
-            {/* Tablet: Two columns */}
-            <div className="hidden sm:grid lg:hidden grid-cols-2 gap-x-[10px] gap-y-[8px]">
-              <div className="flex flex-col gap-[8px]">
-                {getColumnProjects(0, 2).map((project, index) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-              <div className="flex flex-col gap-[8px]">
-                {getColumnProjects(1, 2).map((project, index) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
+          {/* Tablet: Two columns */}
+          <div className="hidden sm:grid lg:hidden grid-cols-2 gap-x-[10px] gap-y-[8px]">
+            <div className="flex flex-col gap-[8px]">
+              {getColumnProjects(0, 2).map((project, index) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
             </div>
+            <div className="flex flex-col gap-[8px]">
+              {getColumnProjects(1, 2).map((project, index) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          </div>
 
-            {/* Desktop: Three columns */}
-            <div className="hidden lg:grid grid-cols-3 gap-x-[10px] gap-y-[8px]">
-              <div className="flex flex-col gap-[8px]">
-                {column1.map((project, index) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-              <div className="flex flex-col gap-[8px]">
-                {column2.map((project, index) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-              <div className="flex flex-col gap-[8px]">
-                {column3.map((project, index) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
+          {/* Desktop: Three columns */}
+          <div className="hidden lg:grid grid-cols-3 gap-x-[10px] gap-y-[8px]">
+            <div className="flex flex-col gap-[8px]">
+              {column1.map((project, index) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
             </div>
-          </>
-        )}
+            <div className="flex flex-col gap-[8px]">
+              {column2.map((project, index) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+            <div className="flex flex-col gap-[8px]">
+              {column3.map((project, index) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          </div>
+        </>
 
         {/* Footer */}
         <div className="mt-16 text-center">

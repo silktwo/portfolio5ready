@@ -181,30 +181,30 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
           <div className="flex flex-col gap-1">
             <button
               onClick={() => scrollToSection("project")}
-              className={`px-3 py-1.5 text-[11px] font-bold transition-colors rounded-md ${
+              className={`px-3 py-1.5 text-[11px] font-bold transition-colors ${
                 activeSection === "project"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
               }`}
             >
               {caseProject.projectTitle.toUpperCase()}
             </button>
             <button
               onClick={() => scrollToSection("info")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "info"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
               }`}
             >
               PROJECT INFO
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "gallery"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
               }`}
             >
               GALLERY
@@ -212,10 +212,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             {hasDrafts && (
               <button
                 onClick={() => scrollToSection("drafts")}
-                className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
+                className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                   activeSection === "drafts"
-                    ? "bg-[#eaeaea] text-[#202020]"
-                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                    ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
+                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
                 }`}
               >
                 DRAFTS
@@ -223,10 +223,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             )}
             <button
               onClick={() => scrollToSection("contact")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "contact"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
               }`}
             >
               CONTACT
@@ -246,14 +246,14 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
       </section>
 
       {/* Project Information Section */}
-      <section id="info" className="py-0">
+      <section id="info" className="py-16">
         <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
           {/* Project Information Header */}
           <div className="text-center mb-8">
             <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">PROJECT INFORMATION</h2>
           </div>
 
-          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto">
+          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto py-8">
             {/* Description - Left Side */}
             <div className="flex-1">
               <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">DESCRIPTION:</h3>
