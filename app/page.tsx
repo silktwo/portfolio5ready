@@ -129,12 +129,19 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [dataSource, setDataSource] = useState<"database" | "fallback">("fallback")
 
-  // Fetch cases from CMS
+  // Fetch cases from API
   useEffect(() => {
     const fetchCases = async () => {
       try {
         console.log("🔄 Fetching cases for homepage...")
-        const result = await getCaseProjects()
+        const response = await fetch("/api/cases", {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        })
+
+        const result = await response.json()
 
         if (result.success && result.data.length > 0) {
           console.log("✅ Successfully loaded cases from database:", result.data.length)

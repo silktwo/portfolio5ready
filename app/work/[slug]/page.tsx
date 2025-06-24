@@ -3,6 +3,52 @@ import { getCaseBySlug } from "@/lib/notion-cases"
 import WorkPageClient from "./WorkPageClient"
 import type { Metadata } from "next"
 
+// Fallback projects for when database is not accessible
+const fallbackProjects: Record<string, any> = {
+  "maitreya": {
+    id: "fallback-maitreya",
+    projectTitle: "Maitreya",
+    categoryTags: ["identity", "packaging", "logo design"],
+    description: "Brand identity and packaging design for Maitreya wellness products.",
+    team: "Designer: Anna Leonchenko, Creative Director: John Doe",
+    introImage: "/placeholder.svg?height=800&width=1200",
+    thumbnail: "/placeholder.svg?height=400&width=600",
+    projectMedia: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800"
+    ],
+    draftProcess: [
+      "/placeholder.svg?height=400&width=600",
+      "/placeholder.svg?height=400&width=600"
+    ],
+    addMedia: [],
+    publish: true,
+    link: "",
+    slug: "maitreya",
+    comingSoon: false
+  },
+  "bickerstaff": {
+    id: "fallback-bickerstaff",
+    projectTitle: "Bickerstaff",
+    categoryTags: ["branding", "web design"],
+    description: "Complete brand identity and website design for Bickerstaff consulting.",
+    team: "Designer: Jane Smith, Developer: Mike Johnson",
+    introImage: "/placeholder.svg?height=800&width=1200",
+    thumbnail: "/placeholder.svg?height=400&width=600",
+    projectMedia: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800"
+    ],
+    draftProcess: [],
+    addMedia: [],
+    publish: true,
+    link: "",
+    slug: "bickerstaff",
+    comingSoon: false
+  }
+}
+
 // Enhanced slug matching function
 function findProjectBySlug(projects: any[], targetSlug: string) {
   // First try exact match
@@ -92,6 +138,17 @@ export default async function WorkPage({ params }: Props) {
           console.log(`✅ Server: Found project with enhanced matching: ${project.projectTitle}`)
           dataSource = "database"
         }
+      }
+    }
+
+    // If still not found, try fallback data
+    if (!project) {
+      console.log(`⚠️ Server: Project not found in database, checking fallback data`)
+      const fallbackProject = fallbackProjects[resolvedParams.slug]
+      if (fallbackProject) {
+        console.log(`✅ Server: Using fallback data for: ${resolvedParams.slug}`)
+        project = fallbackProject
+        dataSource = "fallback"
       }
     }
 
