@@ -5,6 +5,7 @@ export interface CaseProject {
   description: string
   team: string
   introImage: string
+  thumbnail?: string // Added thumbnail field for homepage
   projectMedia: string[]
   draftProcess: string[]
   addMedia: string[]
@@ -163,6 +164,7 @@ export async function getCaseProjects(): Promise<{
         const team = extractTextFromRichText(properties.team?.rich_text || [])
         const categoryTags = extractMultiSelectFromProperty(properties.categoryTags?.multi_select || [])
         const introImage = extractFilesFromProperty(properties.introImage?.files || [])[0] || ""
+        const thumbnail = extractFilesFromProperty(properties.thumbnail?.files || [])[0] || introImage // Use introImage as fallback
         const projectMedia = extractFilesFromProperty(properties.projectMedia?.files || [])
         const draftProcess = extractFilesFromProperty(properties.draftProcess?.files || [])
         const addMedia = extractFilesFromProperty(properties.addMedia?.files || [])
@@ -179,8 +181,8 @@ export async function getCaseProjects(): Promise<{
           continue
         }
 
-        if (!introImage) {
-          metadata.warnings.push(`Skipping project "${projectTitle}": Missing introImage`)
+        if (!introImage && !thumbnail) {
+          metadata.warnings.push(`Skipping project "${projectTitle}": Missing introImage and thumbnail`)
           continue
         }
 
@@ -197,6 +199,7 @@ export async function getCaseProjects(): Promise<{
           description,
           team,
           introImage,
+          thumbnail,
           projectMedia,
           draftProcess,
           addMedia,

@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 import { getCaseProjects, type CaseProject } from "@/lib/notion-cases"
 
 // Project Card Component
-function ProjectCard({ project, className = "" }: { project: CaseProject; className?: string }) {
+function ProjectCard({ project, className = "", onClick }: { project: CaseProject; className?: string; onClick?: () => void }) {
   const router = useRouter()
   const [imageError, setImageError] = useState(false)
 
@@ -21,12 +21,16 @@ function ProjectCard({ project, className = "" }: { project: CaseProject; classN
 
   // Use introImage as thumbnail if available, otherwise fallback to placeholder
   const thumbnailImage = project.introImage || "/placeholder.svg?height=300&width=400"
-  
+
   return (
     <div
       className={`flex flex-col gap-2 ${className} cursor-pointer group`}
       onClick={() => {
-        router.push(`/work/${project.slug}`)
+        if (onClick) {
+          onClick()
+        } else {
+          router.push(`/work/${project.slug}`)
+        }
       }}
     >
       <p className="font-medium text-black text-[12px] leading-[8px] uppercase">{project.projectTitle}</p>
@@ -112,9 +116,16 @@ function ThreeColumnWorksSection({ activeFilters, projects }: { activeFilters: s
   )
 }
 
+// Define a type that is compatible with both CaseProject and your existing project types
+type ProjectWithCompat = CaseProject & {
+  title?: string // Make title optional
+  thumbnail?: string // Make thumbnail optional
+  category?: string
+}
+
 export default function Home() {
   const [activeFilters, setActiveFilters] = useState<string[]>([])
-  const [projects, setProjects] = useState<CaseProject[]>([])
+  const [projects, setProjects] = useState<ProjectWithCompat[]>([])
   const [loading, setLoading] = useState(true)
   const [dataSource, setDataSource] = useState<"database" | "fallback">("fallback")
 
@@ -124,10 +135,10 @@ export default function Home() {
       try {
         console.log("🔄 Fetching cases for homepage...")
         const result = await getCaseProjects()
-        
+
         if (result.success && result.data.length > 0) {
           console.log("✅ Successfully loaded cases from database:", result.data.length)
-          setProjects(result.data)
+          setProjects(result.data as ProjectWithCompat[])
           setDataSource("database")
         } else {
           console.log("⚠️ No cases found, using fallback data")
@@ -149,7 +160,7 @@ export default function Home() {
               comingSoon: false,
             },
             {
-              id: "fallback-2", 
+              id: "fallback-2",
               projectTitle: "FRESH BLACK COLD BREW, PACKAGING",
               categoryTags: ["PACKAGING"],
               description: "",
@@ -163,7 +174,7 @@ export default function Home() {
               slug: "fresh-black-cold-brew",
               comingSoon: true,
             },
-          ])
+          ] as ProjectWithCompat[])
           setDataSource("fallback")
         }
       } catch (error) {
