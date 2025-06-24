@@ -97,13 +97,18 @@ export async function getCaseProjects(): Promise<{
 
     // Get environment variables with fallback
     const token = process.env.CASES_TOKEN || process.env.NOTION_TOKEN || process.env.PERSONAL_TOKEN
-    const databaseId = cleanDatabaseId(process.env.CASES_DATABASE_ID || "20855dd5594d805f94d8d0f5686b292d")
+    const databaseId = cleanDatabaseId(process.env.CASES_DATABASE_ID || process.env.NOTION_DATABASE_ID || "20855dd5594d805f94d8d0f5686b292d")
 
     metadata.debugInfo.token = token ? `${token.substring(0, 10)}...` : "Not found"
     metadata.debugInfo.databaseId = databaseId
 
     if (!token) {
-      metadata.errors.push("No authentication token found. Please set CASES_TOKEN, NOTION_TOKEN, or PERSONAL_TOKEN.")
+      metadata.errors.push("No authentication token found. Please set CASES_TOKEN in your environment variables.")
+      console.log("🔍 Available environment variables:", {
+        CASES_TOKEN: process.env.CASES_TOKEN ? "Set" : "Not set",
+        NOTION_TOKEN: process.env.NOTION_TOKEN ? "Set" : "Not set", 
+        PERSONAL_TOKEN: process.env.PERSONAL_TOKEN ? "Set" : "Not set"
+      })
       return { success: false, data: [], metadata }
     }
 
