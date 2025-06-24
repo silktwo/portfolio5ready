@@ -141,40 +141,9 @@ export default function Home() {
           setProjects(result.data as ProjectWithCompat[])
           setDataSource("database")
         } else {
-          console.log("⚠️ No cases found, using fallback data")
-          // Fallback projects if CMS fails
-          setProjects([
-            {
-              id: "fallback-1",
-              projectTitle: "MAITREYA, LOGO DESIGN, IDENTITY, PACKAGING",
-              categoryTags: ["IDENTITY", "PACKAGING"],
-              description: "",
-              team: "",
-              introImage: "/placeholder.svg?height=150&width=200",
-              projectMedia: [],
-              draftProcess: [],
-              addMedia: [],
-              publish: true,
-              link: "",
-              slug: "maitreya-logo-design",
-              comingSoon: false,
-            },
-            {
-              id: "fallback-2",
-              projectTitle: "FRESH BLACK COLD BREW, PACKAGING",
-              categoryTags: ["PACKAGING"],
-              description: "",
-              team: "",
-              introImage: "/placeholder.svg?height=150&width=200",
-              projectMedia: [],
-              draftProcess: [],
-              addMedia: [],
-              publish: true,
-              link: "",
-              slug: "fresh-black-cold-brew",
-              comingSoon: true,
-            },
-          ] as ProjectWithCompat[])
+          console.log("❌ Failed to load cases from database")
+          console.log("Metadata:", result.metadata)
+          setProjects([])
           setDataSource("fallback")
         }
       } catch (error) {

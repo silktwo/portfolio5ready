@@ -40,15 +40,37 @@ function extractMultiSelectFromProperty(multiSelect: any[]): string[] {
   return multiSelect.map((item) => item.name || "").filter(Boolean)
 }
 
-// Generate slug from project title
+// Generate slug from project title to match expected URL patterns
 function generateSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
+    .replace(/[^a-z0-9\s]+/g, "") // Remove special characters but keep spaces
+    .trim()
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/^-+|-+$/g, "") // Remove leading/trailing hyphens
 }
 
-// Function to get a single case by slug
+// Enhanced slug generation for better URL matching
+function generateEnhancedSlug(title: string): string {
+  // Handle common patterns in project titles
+  const cleanTitle = title
+    .toLowerCase()
+    .replace(/,/g, "") // Remove commas
+    .replace(/\s+/g, " ") // Normalize spaces
+    .trim()
+  
+  // Generate multiple slug variations
+  const baseSlug = cleanTitle.replace(/\s+/g, "-")
+  
+  // For titles like "MAITREYA, LOGO DESIGN, IDENTITY, PACKAGING"
+  // Generate both "maitreya" and "maitreya-logo-design-identity-packaging"
+  const firstWord = cleanTitle.split(/[\s,]+/)[0]
+  const fullSlug = baseSlug
+  
+  return fullSlug
+}
+
+// Enhanced function to get a single case by slug with flexible matching
 export async function getCaseBySlug(slug: string): Promise<CaseProject | null> {
   try {
     console.log(`🔍 Searching for case with slug: ${slug}`)
@@ -61,15 +83,38 @@ export async function getCaseBySlug(slug: string): Promise<CaseProject | null> {
       return null
     }
 
-    // Find case by matching slug
-    const project = result.data.find((project) => project.slug === slug)
+    // Try exact slug match first
+    let project = result.data.find((project) => project.slug === slug)
 
     if (project) {
-      console.log(`✅ Found matching project: ${project.projectTitle}`)
+      console.log(`✅ Found exact slug match: ${project.projectTitle}`)
+      return project
+    }
+
+    // Try enhanced matching for backward compatibility
+    const targetWords = slug.toLowerCase().split('-')
+    const firstWord = targetWords[0]
+
+    // Look for projects that start with the first word or contain it
+    project = result.data.find((project) => {
+      const projectSlug = project.slug.toLowerCase()
+      const titleWords = project.projectTitle.toLowerCase().split(/[\s,]+/)
+      
+      return (
+        projectSlug.startsWith(firstWord) ||
+        projectSlug.includes(firstWord) ||
+        titleWords.includes(firstWord) ||
+        titleWords.some(word => targetWords.includes(word))
+      )
+    })
+
+    if (project) {
+      console.log(`✅ Found project with enhanced matching: ${project.projectTitle} (slug: ${project.slug})`)
       return project
     }
 
     console.log(`❌ No project found for slug: ${slug}`)
+    console.log(`Available projects:`, result.data.map(p => ({ title: p.projectTitle, slug: p.slug })))
     return null
   } catch (error) {
     console.error("❌ Error in getCaseBySlug:", error)
@@ -172,8 +217,8 @@ export async function getCaseProjects(): Promise<{
         const comingSoon = properties.comingSoon?.checkbox || false
         const link = properties.link?.url || ""
 
-        // Generate slug from title
-        const slug = generateSlug(projectTitle)
+        // Generate slug from title with enhanced logic
+        const slug = generateEnhancedSlug(projectTitle)
 
         // Validate required fields
         if (!projectTitle) {

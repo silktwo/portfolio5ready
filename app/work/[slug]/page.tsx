@@ -3,56 +3,31 @@ import { getCaseBySlug } from "@/lib/notion-cases"
 import WorkPageClient from "./WorkPageClient"
 import type { Metadata } from "next"
 
-// Fallback data for development and testing
-const fallbackProjects = {
-  "maitreya-logo-design": {
-    id: "fallback-1",
-    projectTitle: "MAITREYA",
-    slug: "maitreya-logo-design",
-    description:
-      "Maitreya is a premium tea brand that focuses on organic, ethically sourced teas. The identity system was designed to reflect the brand's commitment to quality and sustainability while maintaining a modern, minimalist aesthetic.",
-    team: "Designer: Dmytro Kifuliak, Creative director: Illia Anufriienko, Senior copywriter: Sergey Artemenko",
-    categoryTags: ["IDENTITY", "PACKAGING", "LOGO DESIGN"],
-    introImage: "/placeholder.svg?height=800&width=1440",
-    projectMedia: [
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=800&width=600",
-      "/placeholder.svg?height=600&width=800",
-    ],
-    draftProcess: [
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-    ],
-    addMedia: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    publish: true,
-    link: "",
-  },
-  "derzhstat-identity": {
-    id: "fallback-2",
-    projectTitle: "DERZHSTAT",
-    slug: "derzhstat-identity",
-    description:
-      "A comprehensive identity system for Derzhstat, Ukraine's State Statistics Service. The project involved creating a modern visual language that could effectively communicate complex statistical data while maintaining a professional government identity.",
-    team: "Designer: Dmytro Kifuliak, Creative director: Illia Anufriienko, Senior strategist: Sergey Lizunov",
-    categoryTags: ["IDENTITY", "BRANDING"],
-    introImage: "/placeholder.svg?height=800&width=1440",
-    projectMedia: [
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=800&width=600",
-      "/placeholder.svg?height=600&width=800",
-    ],
-    draftProcess: [
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-    ],
-    addMedia: ["/placeholder.svg?height=600&width=800"],
-    publish: true,
-    link: "",
-  },
+// Enhanced slug matching function
+function findProjectBySlug(projects: any[], targetSlug: string) {
+  // First try exact match
+  let project = projects.find(p => p.slug === targetSlug)
+  if (project) return project
+  
+  // Try partial matches for backward compatibility
+  const targetWords = targetSlug.toLowerCase().split('-')
+  const firstWord = targetWords[0]
+  
+  // Look for projects that start with the first word
+  project = projects.find(p => {
+    const projectSlug = p.slug.toLowerCase()
+    return projectSlug.startsWith(firstWord) || projectSlug.includes(firstWord)
+  })
+  
+  if (project) return project
+  
+  // Try matching by project title
+  project = projects.find(p => {
+    const titleWords = p.projectTitle.toLowerCase().split(/[\s,]+/)
+    return titleWords.some(word => targetWords.includes(word))
+  })
+  
+  return project
 }
 
 interface Props {
@@ -103,17 +78,20 @@ export default async function WorkPage({ params }: Props) {
     let project = await getCaseBySlug(resolvedParams.slug)
     let dataSource = "database"
 
-    // If not found in database, try fallback data
+    // If not found with exact slug, try enhanced matching
     if (!project) {
-      console.log(`⚠️ Server: Project not found in database, checking fallback data`)
-      const fallbackProject = fallbackProjects[resolvedParams.slug]
-
-      if (fallbackProject) {
-        console.log(`✅ Server: Using fallback data for: ${resolvedParams.slug}`)
-        project = fallbackProject
-        dataSource = "fallback"
-      } else {
-        console.log(`❌ Server: Project not found in fallback data either: ${resolvedParams.slug}`)
+      console.log(`⚠️ Server: Project not found with exact slug, trying enhanced matching`)
+      
+      // Get all projects and try enhanced matching
+      const { getCaseProjects } = await import("@/lib/notion-cases")
+      const allProjectsResult = await getCaseProjects()
+      
+      if (allProjectsResult.success && allProjectsResult.data.length > 0) {
+        project = findProjectBySlug(allProjectsResult.data, resolvedParams.slug)
+        if (project) {
+          console.log(`✅ Server: Found project with enhanced matching: ${project.projectTitle}`)
+          dataSource = "database"
+        }
       }
     }
 
