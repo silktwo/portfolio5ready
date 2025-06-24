@@ -84,7 +84,7 @@ async function getPersonalProjectsFromNotion(): Promise<PersonalProject[]> {
 
         return {
           id: page.id,
-          title: title.toUpperCase(),
+          title: title,
           slug,
           image,
           height: "200px",

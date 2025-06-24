@@ -124,13 +124,13 @@ function ProjectCard({
   return (
     <div className={`flex flex-col ${className}`}>
       <div
-        className="relative bg-gray-100 overflow-hidden rounded-lg mb-2 cursor-pointer hover:opacity-90 transition-opacity"
+        className="relative bg-gray-100 overflow-hidden rounded-[6px] mb-2 cursor-pointer hover:opacity-90 transition-opacity"
         onClick={onImageClick}
       >
         <img
           src={imageError ? "/placeholder.svg?height=300&width=300" : project.image}
           alt={project.title}
-          className="w-full h-auto object-contain"
+          className="w-full h-auto object-contain rounded-[6px]"
           onError={handleImageError}
         />
       </div>

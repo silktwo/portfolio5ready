@@ -184,30 +184,30 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               className={`px-3 py-1.5 text-[11px] font-bold transition-colors ${
                 activeSection === "project"
                   ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
-              {caseProject.projectTitle.toUpperCase()}
+              {caseProject.projectTitle}
             </button>
             <button
               onClick={() => scrollToSection("info")}
               className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "info"
                   ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
-              PROJECT INFO
+              Project Info
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
               className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "gallery"
                   ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
-              GALLERY
+              Gallery
             </button>
             {hasDrafts && (
               <button
@@ -215,10 +215,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                 className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                   activeSection === "drafts"
                     ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                    : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
                 }`}
               >
-                DRAFTS
+                Drafts
               </button>
             )}
             <button
@@ -226,10 +226,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "contact"
                   ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
-              CONTACT
+              Contact
             </button>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         <img
           src={caseProject.introImage || "/placeholder.svg"}
           alt={caseProject.projectTitle}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-[6px]"
         />
         <div className="absolute inset-0 bg-black bg-opacity-20" />
       </section>
@@ -250,13 +250,13 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
           {/* Project Information Header */}
           <div className="text-center mb-8">
-            <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">PROJECT INFORMATION</h2>
+            <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">Project Information</h2>
           </div>
 
           <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto py-12">
             {/* Description - Left Side */}
             <div className="flex-1 py-4">
-              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">DESCRIPTION:</h3>
+              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">Description:</h3>
               <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal]">
                 {caseProject.description}
               </p>
@@ -264,7 +264,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
 
             {/* Team Credits - Right Side with Roboto Mono */}
             <div className="w-full lg:w-[300px] py-4">
-              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">TEAM:</h3>
+              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">Team:</h3>
               <div className="space-y-2">
                 {teamMembers.map((member, index) => (
                   <div
@@ -366,7 +366,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                      className="w-full h-full object-cover block"
+                      className="w-full h-full object-cover block rounded-[6px]"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -386,7 +386,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block rounded-[6px]"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -394,7 +394,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block rounded-[6px]"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -407,7 +407,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                        className="w-full h-full object-cover block"
+                        className="w-full h-full object-cover block rounded-[6px]"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -428,7 +428,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
           {/* Process & Drafts button - absolute positioned on top left */}
           <div className="absolute top-8 left-8 z-10">
             <Badge className="inline-flex items-center justify-center gap-1 py-1 px-4 rounded-full bg-black hover:bg-gray-800 cursor-pointer h-8">
-              <span className="text-[11px] font-medium whitespace-nowrap text-[#E3E3E3]">PROCESS & DRAFTS</span>
+              <span className="text-[11px] font-medium whitespace-nowrap text-[#E3E3E3]">Process & Drafts</span>
             </Badge>
           </div>
 
@@ -454,7 +454,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
           {/* Social Links */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
-            <span className="font-medium text-[#202020] text-[12px]">SOCIAL:</span>
+            <span className="font-medium text-[#202020] text-[12px]">Social:</span>
             <div className="flex items-center gap-3 flex-wrap justify-center">
               {socialLinks.map((link, index) => (
                 <a
