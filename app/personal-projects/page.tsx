@@ -1,123 +1,119 @@
+
 "use client"
 
-import { useState, useEffect } from "react"
+import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from "react"
 import Navigation from "@/components/navigation"
 import BackToTop from "@/components/back-to-top"
-import Footer from "@/components/footer"
-import { getPersonalProjects, type PersonalProject } from "@/lib/notion-projects"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
 
-// Image Modal Component with Navigation
-function ImageModal({
-  images,
-  currentIndex,
-  isOpen,
-  onClose,
-  onNext,
-  onPrevious,
-}: {
-  images: { src: string; alt: string }[]
-  currentIndex: number
-  isOpen: boolean
-  onClose: () => void
-  onNext: () => void
-  onPrevious: () => void
-}) {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose()
-      } else if (e.key === "ArrowLeft") {
-        onPrevious()
-      } else if (e.key === "ArrowRight") {
-        onNext()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape)
-      document.body.style.overflow = "hidden"
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape)
-      document.body.style.overflow = "unset"
-    }
-  }, [isOpen, onClose, onNext, onPrevious])
-
-  if (!isOpen || !images[currentIndex]) return null
-
-  const currentImage = images[currentIndex]
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors z-10"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        {/* Previous button */}
-        {images.length > 1 && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onPrevious()
-            }}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        )}
-
-        {/* Next button */}
-        {images.length > 1 && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onNext()
-            }}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        )}
-
-        {/* Image counter */}
-        {images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded-full">
-            {currentIndex + 1} / {images.length}
-          </div>
-        )}
-
-        <img
-          src={currentImage.src || "/placeholder.svg"}
-          alt={currentImage.alt}
-          className="max-w-full max-h-full object-contain"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </div>
-    </div>
-  )
+interface PersonalProject {
+  id: string
+  title: string
+  description?: string
+  tags: string[]
+  image?: string
+  link?: string
+  status: "completed" | "in-progress" | "coming-soon"
+  priority: number
 }
 
-// Project Card Component
-function ProjectCard({
-  project,
-  className = "",
-  onImageClick,
-}: {
-  project: PersonalProject
-  className?: string
-  onImageClick: () => void
-}) {
-  const [imageError, setImageError] = useState(false)
+// Mock data for personal projects
+const mockPersonalProjects: PersonalProject[] = [
+  {
+    id: "1",
+    title: "Generative Art Collection",
+    description: "A series of algorithmic art pieces exploring color theory and geometric patterns.",
+    tags: ["Creative Coding", "Art", "Javascript"],
+    image: "/placeholder.svg?height=300&width=400",
+    link: "https://example.com/art-collection",
+    status: "completed",
+    priority: 1,
+  },
+  {
+    id: "2",
+    title: "Photography Portfolio",
+    description: "Personal photography work focusing on urban landscapes and street photography.",
+    tags: ["Photography", "Portfolio"],
+    image: "/placeholder.svg?height=400&width=300",
+    status: "in-progress",
+    priority: 2,
+  },
+  {
+    id: "3",
+    title: "Interactive Data Visualization",
+    description: "Exploring climate data through interactive web-based visualizations.",
+    tags: ["Data Viz", "D3.js", "Climate"],
+    image: "/placeholder.svg?height=350&width=400",
+    status: "coming-soon",
+    priority: 3,
+  },
+  {
+    id: "4",
+    title: "Experimental Typography",
+    description: "Pushing boundaries in digital typography and letterform design.",
+    tags: ["Typography", "Design", "Experimental"],
+    image: "/placeholder.svg?height=320&width=400",
+    status: "completed",
+    priority: 4,
+  },
+  {
+    id: "5",
+    title: "Sound Visualization",
+    description: "Real-time audio visualization using WebGL and modern web technologies.",
+    tags: ["WebGL", "Audio", "Creative Coding"],
+    image: "/placeholder.svg?height=380&width=350",
+    status: "in-progress",
+    priority: 5,
+  },
+  {
+    id: "6",
+    title: "3D Web Experiments",
+    description: "Exploring three-dimensional web experiences with Three.js.",
+    tags: ["Three.js", "3D", "WebGL"],
+    image: "/placeholder.svg?height=300&width=380",
+    status: "coming-soon",
+    priority: 6,
+  },
+]
 
-  const handleImageError = () => {
-    setImageError(true)
+// Project Card Component
+function ProjectCard({ project, className = "" }: { project: PersonalProject; className?: string }) {
+  const [imageLoaded, setImageLoaded] = useState(false)
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-100 text-green-800"
+      case "in-progress":
+        return "bg-blue-100 text-blue-800"
+      case "coming-soon":
+        return "bg-yellow-100 text-yellow-800"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "COMPLETED"
+      case "in-progress":
+        return "IN PROGRESS"
+      case "coming-soon":
+        return "COMING SOON"
+      default:
+        return status.toUpperCase()
+    }
+  }
+
+  const handleImageLoad = () => {
+    setImageLoaded(true)
+  }
+
+  const onImageClick = () => {
+    if (project.link && project.status === "completed") {
+      window.open(project.link, "_blank")
+    }
   }
 
   return (
@@ -126,125 +122,131 @@ function ProjectCard({
         className="relative bg-gray-100 overflow-hidden rounded-[6px] mb-2 cursor-pointer hover:opacity-90 transition-opacity"
         onClick={onImageClick}
       >
-        <img
-          src={imageError ? "/placeholder.svg?height=300&width=300" : project.image}
-          alt={project.title}
-          className="w-full h-auto object-contain rounded-[6px]"
-          onError={handleImageError}
-        />
+        {/* Status Badge */}
+        <div className="absolute top-2 left-2 z-10">
+          <Badge className={`text-[9px] font-medium px-2 py-1 ${getStatusColor(project.status)}`}>
+            {getStatusText(project.status)}
+          </Badge>
+        </div>
+
+        {/* Image */}
+        <div className="aspect-[4/3] relative">
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+              <div className="text-gray-400 text-sm">Loading...</div>
+            </div>
+          )}
+          <img
+            src={project.image || "/placeholder.svg?height=300&width=400"}
+            alt={project.title}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+            onLoad={handleImageLoad}
+          />
+        </div>
+
+        {/* Hover Overlay for Completed Projects */}
+        {project.status === "completed" && (
+          <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+            <div className="text-white opacity-0 hover:opacity-100 transition-opacity duration-300 font-medium text-sm">
+              VIEW PROJECT
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Project Info */}
       <div className="text-left">
-        <p className="text-black text-[12px] tracking-[0] leading-[normal]" style={{ fontFamily: "Roboto Mono, monospace" }}>{project.title}</p>
-      </div>
-      {project.description && (
-        <div className="text-left">
-          <p className="text-[11px] text-[#939393] leading-[normal] tracking-[0]" style={{ fontFamily: "Roboto Mono, monospace" }}>
+        <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal] mb-1" style={{ fontFamily: "Roboto Mono, monospace" }}>
+          {project.title}
+        </p>
+        {project.description && (
+          <p className="text-[11px] text-[#939393] leading-[normal] tracking-[0] mb-2" style={{ fontFamily: "Roboto Mono, monospace" }}>
             {project.description}
           </p>
+        )}
+        
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1">
+          {project.tags.map((tag, index) => (
+            <Badge
+              key={index}
+              className="text-[9px] font-medium px-2 py-0.5 bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              {tag}
+            </Badge>
+          ))}
         </div>
-      )}</div>
-    </div>
-  )
-}
+      </div>
     </div>
   )
 }
 
-export default function PersonalProjects() {
-  const [activePage, setActivePage] = useState<string | null>("Personal Projects")
+export default function PersonalProjectsPage() {
   const [projects, setProjects] = useState<PersonalProject[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [lastUpdate, setLastUpdate] = useState<string>("")
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  // Prepare images for modal
-  const modalImages = projects.map((project, index) => ({
-    src: project.image,
-    alt: project.title,
-    projectIndex: index,
-  }))
-
-  const openModal = (projectIndex: number) => {
-    setCurrentImageIndex(projectIndex)
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-  }
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % modalImages.length)
-  }
-
-  const previousImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + modalImages.length) % modalImages.length)
-  }
 
   useEffect(() => {
-    async function fetchProjects() {
+    // Simulate API call with mock data
+    const fetchProjects = async () => {
       try {
         setLoading(true)
+        // In a real implementation, you would fetch from your API
+        // const response = await fetch('/api/personal-projects')
+        // const data = await response.json()
+        
+        // For now, use mock data
+        await new Promise(resolve => setTimeout(resolve, 500)) // Simulate loading
+        setProjects(mockPersonalProjects.sort((a, b) => a.priority - b.priority))
         setError(null)
-        console.log("Fetching personal projects from Notion...")
-
-        const projectsData = await getPersonalProjects()
-        console.log(`Loaded ${projectsData.length} projects from database`)
-
-        setProjects(projectsData)
-
-        // Find the most recently updated project
-        if (projectsData.length > 0) {
-          const mostRecentProject = projectsData.reduce((latest, current) => {
-            const latestDate = new Date(latest.lastEditedTime || latest.createdTime || 0)
-            const currentDate = new Date(current.lastEditedTime || current.createdTime || 0)
-            return currentDate > latestDate ? current : latest
-          })
-
-          // Format the date from the most recent project
-          const updateDate = new Date(mostRecentProject.lastEditedTime || mostRecentProject.createdTime || Date.now())
-          const day = String(updateDate.getDate()).padStart(2, "0")
-          const month = String(updateDate.getMonth() + 1).padStart(2, "0")
-          const year = String(updateDate.getFullYear()).slice(-2)
-          setLastUpdate(`${day} ${month} ${year}`)
-        } else {
-          // Fallback to current date if no projects
-          const now = new Date()
-          const day = String(now.getDate()).padStart(2, "0")
-          const month = String(now.getMonth() + 1).padStart(2, "0")
-          const year = String(now.getFullYear()).slice(-2)
-          setLastUpdate(`${day} ${month} ${year}`)
-        }
-
-        if (projectsData.length === 0) {
-          setError("No projects found in the Notion database.")
-        }
-      } catch (err) {
-        console.error("Error loading projects:", err)
-        setError("Failed to load projects from Notion database.")
-        setProjects([])
+      } catch (error) {
+        console.error("Error fetching personal projects:", error)
+        setError("Failed to load projects")
       } finally {
         setLoading(false)
       }
     }
 
     fetchProjects()
+    window.scrollTo(0, 0)
   }, [])
+
+  // Distribute projects into columns for desktop layout
+  const getColumnProjects = (columnIndex: number, totalColumns: number) => {
+    return projects.filter((_, index) => index % totalColumns === columnIndex)
+  }
+
+  const column1 = getColumnProjects(0, 3)
+  const column2 = getColumnProjects(1, 3)
+  const column3 = getColumnProjects(2, 3)
 
   if (loading) {
     return (
       <div className="bg-white min-h-screen overflow-x-hidden">
-        <div className="w-[calc(100%-40px)] sm:w-[calc(100%-60px)] mx-[20px] sm:mx-[30px] py-[30px] min-h-screen">
+        <div className="w-[calc(100%-40px)] sm:w-[calc(100%-60px)] mx-[20px] sm:mx-[30px] py-[30px]">
           <div className="mb-4">
-            <Navigation activePage={activePage} setActivePage={setActivePage} />
+            <Navigation />
           </div>
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
-              <p className="text-sm text-gray-600">Loading...</p>
-            </div>
+          <div className="flex items-center justify-center h-64">
+            <div className="text-gray-500">Loading...</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white min-h-screen overflow-x-hidden">
+        <div className="w-[calc(100%-40px)] sm:w-[calc(100%-60px)] mx-[20px] sm:mx-[30px] py-[30px]">
+          <div className="mb-4">
+            <Navigation />
+          </div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Error Loading Projects</h1>
+            <p className="text-gray-600">{error}</p>
           </div>
         </div>
       </div>
@@ -253,64 +255,81 @@ export default function PersonalProjects() {
 
   return (
     <div className="bg-white min-h-screen overflow-x-hidden">
-      <div className="w-[calc(100%-40px)] sm:w-[calc(100%-60px)] mx-[20px] sm:mx-[30px] py-[30px] min-h-screen">
+      <div className="w-[calc(100%-40px)] sm:w-[calc(100%-60px)] mx-[20px] sm:mx-[30px] py-[30px]">
         {/* Top Navigation */}
-        <div className="mb-8">
-          <Navigation activePage={activePage} setActivePage={setActivePage} />
+        <div className="mb-4">
+          <Navigation />
         </div>
 
-        {/* Header Section */}
-        <div className="mb-12">
-          <p className="font-medium text-gray-600 text-[14px] max-w-2xl mb-2">
-            A collection of personal design explorations, experiments, and creative projects
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">PERSONAL PROJECTS</h2>
+          <p className="text-[12px] text-[#939393] max-w-2xl mx-auto" style={{ fontFamily: "Roboto Mono, monospace" }}>
+            A collection of personal explorations, experiments, and passion projects spanning creative coding, photography, and design.
           </p>
-          {lastUpdate && <p className="font-medium text-gray-400 text-[12px]">{lastUpdate}</p>}
         </div>
 
-        {/* Error message if database connection fails */}
-        {error && (
-          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800 text-sm">{error}</p>
-            <p className="text-red-600 text-xs mt-2">
-              Make sure your Notion database has entries with both workTitle and workFile fields populated.
-            </p>
+        {/* Projects Grid */}
+        {projects.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No projects available</p>
           </div>
+        ) : (
+          <>
+            {/* Mobile: Single column */}
+            <div className="block sm:hidden">
+              <div className="flex flex-col gap-[8px]">
+                {projects.map((project, index) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+            </div>
+
+            {/* Tablet: Two columns */}
+            <div className="hidden sm:grid lg:hidden grid-cols-2 gap-x-[10px] gap-y-[8px]">
+              <div className="flex flex-col gap-[8px]">
+                {getColumnProjects(0, 2).map((project, index) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+              <div className="flex flex-col gap-[8px]">
+                {getColumnProjects(1, 2).map((project, index) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+            </div>
+
+            {/* Desktop: Three columns */}
+            <div className="hidden lg:grid grid-cols-3 gap-x-[10px] gap-y-[8px]">
+              <div className="flex flex-col gap-[8px]">
+                {column1.map((project, index) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+              <div className="flex flex-col gap-[8px]">
+                {column2.map((project, index) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+              <div className="flex flex-col gap-[8px]">
+                {column3.map((project, index) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
-        {/* Personal Projects Grid */}
-        <section className="w-full mb-16">
-          {projects.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {projects.map((project, index) => (
-                <ProjectCard key={project.id} project={project} onImageClick={() => openModal(index)} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20">
-              <p className="text-gray-500 text-sm">No projects found in the database.</p>
-              <p className="text-gray-400 text-xs mt-2">
-                Add projects to your Notion database with workTitle and workFile fields.
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* Footer Section */}
-        <Footer />
-
-        {/* Back to Top Button */}
-        <BackToTop />
+        {/* Footer */}
+        <div className="mt-16 text-center">
+          <p className="text-[11px] text-[#939393]" style={{ fontFamily: "Roboto Mono, monospace" }}>
+            More projects coming soon...
+          </p>
+        </div>
       </div>
 
-      {/* Image Modal */}
-      <ImageModal
-        images={modalImages}
-        currentIndex={currentImageIndex}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onNext={nextImage}
-        onPrevious={previousImage}
-      />
+      {/* Back to Top Button */}
+      <BackToTop />
     </div>
   )
 }

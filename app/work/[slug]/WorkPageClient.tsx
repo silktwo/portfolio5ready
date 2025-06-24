@@ -181,30 +181,30 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
           <div className="flex flex-col gap-1">
             <button
               onClick={() => scrollToSection("project")}
-              className={`px-3 py-1.5 text-[11px] font-bold transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-bold transition-colors rounded-md ${
                 activeSection === "project"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
               {caseProject.projectTitle.toUpperCase()}
             </button>
             <button
               onClick={() => scrollToSection("info")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
                 activeSection === "info"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
               PROJECT INFO
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
                 activeSection === "gallery"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
               GALLERY
@@ -212,10 +212,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             {hasDrafts && (
               <button
                 onClick={() => scrollToSection("drafts")}
-                className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
                   activeSection === "drafts"
-                    ? "bg-[#eaeaea] text-[#202020] rounded-md"
-                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
+                    ? "bg-[#eaeaea] text-[#202020]"
+                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
                 }`}
               >
                 DRAFTS
@@ -223,10 +223,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             )}
             <button
               onClick={() => scrollToSection("contact")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors rounded-md ${
                 activeSection === "contact"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
               CONTACT
