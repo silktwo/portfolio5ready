@@ -322,23 +322,10 @@ export default function Home() {
           })}
         </div>
 
-        {/* Data Source Indicator */}
-        {dataSource === "fallback" && (
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-sm text-yellow-800">
-              ⚠️ Using fallback data. Check{" "}
-              <a href="/cases-debug" className="underline">
-                Cases Debug
-              </a>{" "}
-              to troubleshoot the database connection.
-            </p>
-          </div>
-        )}
-
         {/* Loading State */}
         {loading && (
           <div className="flex justify-center items-center py-16">
-            <p className="text-gray-500">Loading projects...</p>
+            <p className="text-gray-500">Loading...</p>
           </div>
         )}
 

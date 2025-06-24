@@ -175,36 +175,36 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         </div>
       </div>
 
-      {/* Case Navigation Block - Fixed - Responsive positioning */}
-      <div className="fixed top-[30px] right-[20px] sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:right-auto z-50">
+      {/* Case Navigation Block - Right side, scrolls with page */}
+      <div className="fixed top-[50%] right-[20px] transform -translate-y-1/2 z-50">
         <div className="bg-black rounded-xl p-1">
           <div className="flex flex-col gap-1">
             <button
               onClick={() => scrollToSection("project")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-bold transition-colors ${
                 activeSection === "project"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
               }`}
             >
               {caseProject.projectTitle.toUpperCase()}
             </button>
             <button
               onClick={() => scrollToSection("info")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "info"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
               }`}
             >
               PROJECT INFO
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "gallery"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
               }`}
             >
               GALLERY
@@ -212,10 +212,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             {hasDrafts && (
               <button
                 onClick={() => scrollToSection("drafts")}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
+                className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                   activeSection === "drafts"
-                    ? "bg-[#eaeaea] text-[#202020]"
-                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                    ? "bg-[#eaeaea] text-[#202020] rounded-md"
+                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
                 }`}
               >
                 DRAFTS
@@ -223,10 +223,10 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             )}
             <button
               onClick={() => scrollToSection("contact")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "contact"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-md"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-xl"
               }`}
             >
               CONTACT
@@ -246,7 +246,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
       </section>
 
       {/* Project Information Section */}
-      <section id="info" className="py-16">
+      <section id="info" className="py-0">
         <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
           {/* Project Information Header */}
           <div className="text-center mb-8">
@@ -284,7 +284,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
 
         {/* Full-width images without gaps after description */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 0 && (
-          <div className="mt-16">
+          <div className="mt-0">
             {caseProject.projectMedia.slice(0, 3).map((image, index) => {
               // Determine layout: every 3rd image (index 2, 5, 8, etc.) is full-width
               const isFullWidth = (index + 1) % 3 === 0

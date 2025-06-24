@@ -89,7 +89,7 @@ export default function JournalArticle({ params }: { params: { slug: string } })
         {/* Article Content */}
         {article.content ? (
           <div className="mb-12">
-            <div className="font-medium text-black text-[14px] leading-[20px] whitespace-pre-line font-mono">
+            <div className="font-medium text-black text-[14px] leading-[20px] whitespace-pre-line font-mono" style={{ fontFamily: "Roboto Mono, monospace" }}>
               {article.content}
             </div>
           </div>
