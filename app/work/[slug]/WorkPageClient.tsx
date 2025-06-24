@@ -297,7 +297,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                      className="w-full h-full object-cover block"
+                      className="w-full h-full object-cover block rounded-[6px]"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -313,7 +313,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block rounded-[6px]"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -321,7 +321,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 2}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block rounded-[6px]"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -334,7 +334,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                        className="w-full h-full object-cover block"
+                        className="w-full h-full object-cover block rounded-[6px]"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -366,7 +366,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                      className="w-full h-full object-cover block"
+                      className="w-full h-full object-cover block rounded-[6px]"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -386,7 +386,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block rounded-[6px]"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -394,7 +394,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block rounded-[6px]"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -407,7 +407,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                        className="w-full h-full object-cover block"
+                        className="w-full h-full object-cover block rounded-[6px]"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -440,7 +440,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   <img
                     src={image || "/placeholder.svg"}
                     alt={`${caseProject.projectTitle} - Draft ${index + 1}`}
-                    className="h-[400px] w-auto object-cover block"
+                    className="h-[400px] w-auto object-cover block rounded-[6px]"
                   />
                 </div>
               ))}

@@ -44,7 +44,7 @@ function ProjectCard({ project, className = "", onClick }: { project: CaseProjec
         <img
           src={imageError ? "/placeholder.svg?height=300&width=400" : thumbnailImage}
           alt={project.projectTitle}
-          className={`w-full h-full object-cover rounded-[6px] ${project.comingSoon ? 'blur-[50%]' : ''}`}
+          className={`w-full h-full object-cover rounded-[6px] ${project.comingSoon ? 'blur-[4px]' : ''}`}
           style={{ height: "300px" }}
           onError={handleImageError}
         />

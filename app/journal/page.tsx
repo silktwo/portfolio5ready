@@ -161,7 +161,7 @@ export default function Journal() {
           <img
             src={images[0].url || "/placeholder.svg"}
             alt={entry.description || "Journal image"}
-            className="w-full h-auto object-contain rounded-lg hover:opacity-90 transition-opacity"
+            className="w-full h-auto object-contain rounded-[6px] hover:opacity-90 transition-opacity"
           />
         </div>
       )
@@ -173,7 +173,7 @@ export default function Journal() {
               <img
                 src={image.url || "/placeholder.svg"}
                 alt={`Journal image ${imgIndex + 1}`}
-                className="w-full h-auto object-cover rounded-lg hover:opacity-90 transition-opacity aspect-square"
+                className="w-full h-auto object-cover rounded-[6px] hover:opacity-90 transition-opacity aspect-square"
               />
             </div>
           ))}
