@@ -79,11 +79,11 @@ export default function WorkPage() {
         {projects.map((project) => (
           <Link key={project.id} href={`/work/${project.slug}`}>
             <div className="group cursor-pointer">
-              <div className="aspect-[4/3] bg-gray-100 overflow-hidden mb-4 relative">
+              <div className="aspect-[4/3] bg-gray-100 overflow-hidden mb-4 relative rounded-[6px]">
                 <img
                   src={project.thumbnail || project.introImage || "/placeholder.svg"}
                   alt={project.projectTitle}
-                  className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
+                  className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-[6px] ${
                     project.comingSoon ? 'blur-sm' : ''
                   }`}
                 />

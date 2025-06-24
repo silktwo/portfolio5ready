@@ -42,11 +42,11 @@ function ProjectCard({ project }: { project: PersonalProject }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="relative bg-gray-100 overflow-hidden transition-transform duration-200 hover:scale-[1.02] rounded-lg">
+      <div className="relative bg-gray-100 overflow-hidden transition-transform duration-200 hover:scale-[1.02] rounded-[6px]">
         <img
           src={imageError ? "/placeholder.svg?height=200&width=200" : project.image}
           alt={project.title}
-          className="w-full h-full object-cover rounded-lg"
+          className="w-full h-full object-cover rounded-[6px]"
           style={{ height: project.height || "200px" }}
           onError={handleImageError}
         />

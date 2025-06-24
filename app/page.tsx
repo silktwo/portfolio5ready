@@ -22,10 +22,16 @@ function ProjectCard({ project, className = "", onClick }: { project: CaseProjec
   // Use introImage as thumbnail if available, otherwise fallback to placeholder
   const thumbnailImage = project.introImage || "/placeholder.svg?height=300&width=400"
 
+  // Format title with category tags
+  const displayTitle = project.categoryTags.length > 0 
+    ? `${project.projectTitle}, ${project.categoryTags.join(", ")}`
+    : project.projectTitle
+
   return (
     <div
-      className={`flex flex-col gap-2 ${className} cursor-pointer group`}
+      className={`flex flex-col gap-2 ${className} ${project.comingSoon ? 'cursor-default' : 'cursor-pointer group'}`}
       onClick={() => {
+        if (project.comingSoon) return // Don't allow navigation for coming soon items
         if (onClick) {
           onClick()
         } else {
@@ -33,12 +39,12 @@ function ProjectCard({ project, className = "", onClick }: { project: CaseProjec
         }
       }}
     >
-      <p className="font-medium text-black text-[12px] leading-[8px] uppercase">{project.projectTitle}</p>
-      <div className="relative bg-gray-100 overflow-hidden transition-transform duration-200 group-hover:scale-[1.02] rounded-lg">
+      <p className="font-medium text-black text-[12px] leading-[8px] uppercase">{displayTitle}</p>
+      <div className="relative bg-gray-100 overflow-hidden transition-transform duration-200 group-hover:scale-[1.02] rounded-[6px]">
         <img
           src={imageError ? "/placeholder.svg?height=300&width=400" : thumbnailImage}
           alt={project.projectTitle}
-          className={`w-full h-full object-cover rounded-lg ${project.comingSoon ? 'blur-sm' : ''}`}
+          className={`w-full h-full object-cover rounded-[6px] ${project.comingSoon ? 'blur-[50%]' : ''}`}
           style={{ height: "300px" }}
           onError={handleImageError}
         />
@@ -276,16 +282,20 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Filter Categories with Static X Icons */}
+        {/* Filter Categories with Active State and Circle Close */}
         <div className="flex items-center gap-2 mb-8 flex-wrap">
           {activeFilters.length > 0 && (
             <Badge
               onClick={clearFilters}
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full transition-colors cursor-pointer hover:opacity-80 bg-black text-white"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full transition-colors cursor-pointer hover:opacity-80"
+              style={{
+                backgroundColor: "rgba(149, 149, 149, 0.40)",
+                color: "rgba(148, 148, 148, 1)",
+              }}
             >
               <span className="text-[11px] font-bold">CLEAR ALL</span>
-              <div className="w-3 h-3 bg-white rounded-full flex items-center justify-center flex-shrink-0">
-                <X className="w-2 h-2 text-black" />
+              <div className="w-3 h-3 bg-[#949494] rounded-full flex items-center justify-center flex-shrink-0">
+                <X className="w-2 h-2 text-white" />
               </div>
             </Badge>
           )}
@@ -295,14 +305,16 @@ export default function Home() {
               <Badge
                 key={index}
                 onClick={() => toggleFilter(filter)}
-                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full transition-colors cursor-pointer hover:opacity-80 ${
-                  isActive ? "bg-black text-white" : "bg-[rgba(149,149,149,0.2)] text-[rgba(148,148,148,1)]"
-                }`}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full transition-all duration-200 cursor-pointer hover:opacity-80"
+                style={{
+                  backgroundColor: isActive ? "rgba(149, 149, 149, 0.40)" : "rgba(149, 149, 149, 0.2)",
+                  color: "rgba(148, 148, 148, 1)",
+                }}
               >
-                <span className="text-[11px] font-bold">{filter}</span>
+                <span className="text-[11px] font-bold">{filter.toUpperCase()}</span>
                 {isActive && (
-                  <div className="w-3 h-3 bg-white rounded-full flex items-center justify-center flex-shrink-0">
-                    <X className="w-2 h-2 text-black" />
+                  <div className="w-3 h-3 bg-[#949494] rounded-full flex items-center justify-center flex-shrink-0 animate-in fade-in-0 zoom-in-95 duration-200">
+                    <X className="w-2 h-2 text-white" />
                   </div>
                 )}
               </Badge>

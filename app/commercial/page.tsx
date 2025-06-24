@@ -31,11 +31,11 @@ function ProjectCard({ project, className = "" }: { project: any; className?: st
           <p className="text-gray-500 text-[12px] leading-[14px] uppercase">, {project.categories.join(", ")}</p>
         )}
       </div>
-      <div className="relative bg-gray-100 overflow-hidden transition-transform duration-200 group-hover:scale-[1.02] rounded-lg">
+      <div className="relative bg-gray-100 overflow-hidden transition-transform duration-200 group-hover:scale-[1.02] rounded-[6px]">
         <img
           src={imageError ? "/placeholder.svg?height=300&width=400" : project.image}
           alt={project.title}
-          className="w-full h-auto object-contain rounded-lg"
+          className="w-full h-auto object-contain rounded-[6px]"
           onError={handleImageError}
         />
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
