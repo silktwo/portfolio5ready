@@ -1,3 +1,4 @@
+
 import { getCaseBySlug } from "@/lib/notion-cases"
 import WorkPageClient from "./WorkPageClient"
 import type { Metadata } from "next"
@@ -55,15 +56,17 @@ const fallbackProjects = {
 }
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
+    const resolvedParams = await params
+    
     // Try to get from database
-    const project = await getCaseBySlug(params.slug)
+    const project = await getCaseBySlug(resolvedParams.slug)
 
     if (project) {
       return {
@@ -73,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     // Try fallback data
-    const fallbackProject = fallbackProjects[params.slug]
+    const fallbackProject = fallbackProjects[resolvedParams.slug]
     if (fallbackProject) {
       return {
         title: fallbackProject.projectTitle,
@@ -93,29 +96,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function WorkPage({ params }: Props) {
   try {
-    console.log(`🔍 Server: Fetching project with slug: ${params.slug}`)
+    const resolvedParams = await params
+    console.log(`🔍 Server: Fetching project with slug: ${resolvedParams.slug}`)
 
     // Try to get from database
-    let project = await getCaseBySlug(params.slug)
+    let project = await getCaseBySlug(resolvedParams.slug)
     let dataSource = "database"
 
     // If not found in database, try fallback data
     if (!project) {
       console.log(`⚠️ Server: Project not found in database, checking fallback data`)
-      const fallbackProject = fallbackProjects[params.slug]
+      const fallbackProject = fallbackProjects[resolvedParams.slug]
 
       if (fallbackProject) {
-        console.log(`✅ Server: Using fallback data for: ${params.slug}`)
+        console.log(`✅ Server: Using fallback data for: ${resolvedParams.slug}`)
         project = fallbackProject
         dataSource = "fallback"
       } else {
-        console.log(`❌ Server: Project not found in fallback data either: ${params.slug}`)
+        console.log(`❌ Server: Project not found in fallback data either: ${resolvedParams.slug}`)
       }
     }
 
     // If we have a project (either from database or fallback), render the page
     if (project) {
-      return <WorkPageClient params={params} initialProject={project} dataSource={dataSource} />
+      return <WorkPageClient params={resolvedParams} initialProject={project} dataSource={dataSource} />
     }
 
     // If no project found, show a custom not found page
@@ -125,7 +129,7 @@ export default async function WorkPage({ params }: Props) {
           <div className="mb-8">
             <h1 className="text-2xl font-bold">Project Not Found</h1>
             <p className="mt-2">
-              The project "{params.slug}" could not be found. Please check the URL or return to the projects page.
+              The project "{resolvedParams.slug}" could not be found. Please check the URL or return to the projects page.
             </p>
             <div className="mt-4">
               <a href="/work" className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors">
