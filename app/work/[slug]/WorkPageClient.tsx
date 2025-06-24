@@ -183,8 +183,8 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               onClick={() => scrollToSection("project")}
               className={`px-3 py-1.5 text-[11px] font-bold transition-colors ${
                 activeSection === "project"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
               {caseProject.projectTitle.toUpperCase()}
@@ -193,8 +193,8 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               onClick={() => scrollToSection("info")}
               className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "info"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
               PROJECT INFO
@@ -203,8 +203,8 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               onClick={() => scrollToSection("gallery")}
               className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "gallery"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
               GALLERY
@@ -214,8 +214,8 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                 onClick={() => scrollToSection("drafts")}
                 className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                   activeSection === "drafts"
-                    ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
-                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
+                    ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
+                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
                 }`}
               >
                 DRAFTS
@@ -225,8 +225,8 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               onClick={() => scrollToSection("contact")}
               className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 activeSection === "contact"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[4px]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[4px]"
+                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
               }`}
             >
               CONTACT
@@ -253,9 +253,9 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">PROJECT INFORMATION</h2>
           </div>
 
-          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto py-8">
+          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto py-12">
             {/* Description - Left Side */}
-            <div className="flex-1">
+            <div className="flex-1 py-4">
               <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">DESCRIPTION:</h3>
               <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal]">
                 {caseProject.description}
@@ -263,7 +263,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             </div>
 
             {/* Team Credits - Right Side with Roboto Mono */}
-            <div className="w-full lg:w-[300px]">
+            <div className="w-full lg:w-[300px] py-4">
               <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">TEAM:</h3>
               <div className="space-y-2">
                 {teamMembers.map((member, index) => (
