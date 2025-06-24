@@ -175,61 +175,61 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         </div>
       </div>
 
-      {/* Case Navigation Block - Right side, scrolls with page */}
-      <div className="fixed top-[50%] right-[20px] transform -translate-y-1/2 z-50">
+      {/* Case Navigation Block - Fixed - Responsive positioning */}
+      <div className="fixed top-[30px] right-[20px] sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:right-auto z-50">
         <div className="bg-black rounded-xl p-1">
           <div className="flex flex-col gap-1">
             <button
               onClick={() => scrollToSection("project")}
-              className={`px-3 py-1.5 text-[11px] font-bold transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-colors ${
                 activeSection === "project"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
-              {caseProject.projectTitle}
+              {caseProject.projectTitle.toUpperCase()}
             </button>
             <button
               onClick={() => scrollToSection("info")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                 activeSection === "info"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
-              Project Info
+              PROJECT INFO
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                 activeSection === "gallery"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
-              Gallery
+              GALLERY
             </button>
             {hasDrafts && (
               <button
                 onClick={() => scrollToSection("drafts")}
-                className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                   activeSection === "drafts"
-                    ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                    : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                    ? "bg-[#eaeaea] text-[#202020]"
+                    : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
                 }`}
               >
-                Drafts
+                DRAFTS
               </button>
             )}
             <button
               onClick={() => scrollToSection("contact")}
-              className={`px-3 py-1.5 text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                 activeSection === "contact"
-                  ? "bg-[#eaeaea] text-[#202020] rounded-[6px]"
-                  : "bg-transparent text-[#eaeaea] text-[#eaeaea] hover:bg-gray-800 rounded-[6px]"
+                  ? "bg-[#eaeaea] text-[#202020]"
+                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
               }`}
             >
-              Contact
+              CONTACT
             </button>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         <img
           src={caseProject.introImage || "/placeholder.svg"}
           alt={caseProject.projectTitle}
-          className="w-full h-full object-cover rounded-[6px]"
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black bg-opacity-20" />
       </section>
@@ -250,21 +250,21 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
           {/* Project Information Header */}
           <div className="text-center mb-8">
-            <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">Project Information</h2>
+            <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">PROJECT INFORMATION</h2>
           </div>
 
-          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto py-12">
+          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto">
             {/* Description - Left Side */}
-            <div className="flex-1 py-4">
-              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">Description:</h3>
+            <div className="flex-1">
+              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">DESCRIPTION:</h3>
               <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal]">
                 {caseProject.description}
               </p>
             </div>
 
             {/* Team Credits - Right Side with Roboto Mono */}
-            <div className="w-full lg:w-[300px] py-4">
-              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">Team:</h3>
+            <div className="w-full lg:w-[300px]">
+              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">TEAM:</h3>
               <div className="space-y-2">
                 {teamMembers.map((member, index) => (
                   <div
@@ -284,7 +284,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
 
         {/* Full-width images without gaps after description */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 0 && (
-          <div className="mt-0">
+          <div className="mt-16">
             {caseProject.projectMedia.slice(0, 3).map((image, index) => {
               // Determine layout: every 3rd image (index 2, 5, 8, etc.) is full-width
               const isFullWidth = (index + 1) % 3 === 0
@@ -366,7 +366,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                      className="w-full h-full object-cover block rounded-[6px]"
+                      className="w-full h-full object-cover block"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -386,7 +386,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                          className="w-full h-full object-cover block rounded-[6px]"
+                          className="w-full h-full object-cover block"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -394,7 +394,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
-                          className="w-full h-full object-cover block rounded-[6px]"
+                          className="w-full h-full object-cover block"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -407,7 +407,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                        className="w-full h-full object-cover block rounded-[6px]"
+                        className="w-full h-full object-cover block"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -428,7 +428,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
           {/* Process & Drafts button - absolute positioned on top left */}
           <div className="absolute top-8 left-8 z-10">
             <Badge className="inline-flex items-center justify-center gap-1 py-1 px-4 rounded-full bg-black hover:bg-gray-800 cursor-pointer h-8">
-              <span className="text-[11px] font-medium whitespace-nowrap text-[#E3E3E3]">Process & Drafts</span>
+              <span className="text-[11px] font-medium whitespace-nowrap text-[#E3E3E3]">PROCESS & DRAFTS</span>
             </Badge>
           </div>
 
@@ -454,7 +454,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
           {/* Social Links */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
-            <span className="font-medium text-[#202020] text-[12px]">Social:</span>
+            <span className="font-medium text-[#202020] text-[12px]">SOCIAL:</span>
             <div className="flex items-center gap-3 flex-wrap justify-center">
               {socialLinks.map((link, index) => (
                 <a

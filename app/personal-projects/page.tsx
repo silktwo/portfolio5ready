@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -135,10 +134,15 @@ function ProjectCard({
         />
       </div>
       <div className="text-left">
-        <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal]" style={{ fontFamily: "Roboto Mono, monospace" }}>
-          {project.title}
-        </p>
+        <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal]">{project.title}</p>
       </div>
+      {project.description && (
+        <div className="text-left">
+          <p className="text-[11px] text-[#939393] leading-[normal] tracking-[0]" style={{ fontFamily: "Roboto Mono, monospace" }}>
+            {project.description}
+          </p>
+        </div>
+      )}
     </div>
   )
 }
@@ -224,10 +228,6 @@ export default function PersonalProjects() {
     }
 
     fetchProjects()
-  }, [])
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
   }, [])
 
   if (loading) {

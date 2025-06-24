@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server"
 import { createNotionClient, NOTION_CONFIG } from "@/lib/notion-cms"
 
@@ -84,7 +83,7 @@ async function getPersonalProjectsFromNotion(): Promise<PersonalProject[]> {
 
         return {
           id: page.id,
-          title: title,
+          title: title.toUpperCase(),
           slug,
           image,
           height: "200px",
