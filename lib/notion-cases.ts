@@ -10,7 +10,8 @@ export interface CaseProject {
   addMedia: string[]
   publish: boolean
   link: string
-  slug: string // Added slug field
+  slug: string
+  comingSoon?: boolean // Added comingSoon field
 }
 
 function cleanDatabaseId(id: string): string {
@@ -166,6 +167,7 @@ export async function getCaseProjects(): Promise<{
         const draftProcess = extractFilesFromProperty(properties.draftProcess?.files || [])
         const addMedia = extractFilesFromProperty(properties.addMedia?.files || [])
         const publish = properties.publish?.checkbox || false
+        const comingSoon = properties.comingSoon?.checkbox || false
         const link = properties.link?.url || ""
 
         // Generate slug from title
@@ -201,6 +203,7 @@ export async function getCaseProjects(): Promise<{
           publish,
           link,
           slug,
+          comingSoon,
         }
 
         projects.push(project)

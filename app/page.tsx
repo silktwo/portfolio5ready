@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Navigation from "@/components/navigation"
 import BackToTop from "@/components/back-to-top"
 import Footer from "@/components/footer"
@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { getCaseProjects, type CaseProject } from "@/lib/notion-cases"
 
 // Project Card Component
-function ProjectCard({ project, className = "" }: { project: any; className?: string }) {
+function ProjectCard({ project, className = "" }: { project: CaseProject; className?: string }) {
   const router = useRouter()
   const [imageError, setImageError] = useState(false)
 
@@ -18,22 +19,23 @@ function ProjectCard({ project, className = "" }: { project: any; className?: st
     setImageError(true)
   }
 
+  // Use introImage as thumbnail if available, otherwise fallback to placeholder
+  const thumbnailImage = project.introImage || "/placeholder.svg?height=300&width=400"
+  
   return (
     <div
       className={`flex flex-col gap-2 ${className} cursor-pointer group`}
       onClick={() => {
-        if (!project.comingSoon) {
-          router.push(`/work/${project.slug}`)
-        }
+        router.push(`/work/${project.slug}`)
       }}
     >
-      <p className="font-medium text-black text-[12px] leading-[8px] uppercase">{project.title}</p>
+      <p className="font-medium text-black text-[12px] leading-[8px] uppercase">{project.projectTitle}</p>
       <div className="relative bg-gray-100 overflow-hidden transition-transform duration-200 group-hover:scale-[1.02] rounded-lg">
         <img
-          src={imageError ? "/placeholder.svg?height=300&width=400" : project.image}
-          alt={project.title}
-          className="w-full h-full object-cover rounded-lg"
-          style={{ height: project.height || "300px" }}
+          src={imageError ? "/placeholder.svg?height=300&width=400" : thumbnailImage}
+          alt={project.projectTitle}
+          className={`w-full h-full object-cover rounded-lg ${project.comingSoon ? 'blur-sm' : ''}`}
+          style={{ height: "300px" }}
           onError={handleImageError}
         />
         {project.comingSoon && (
@@ -47,100 +49,12 @@ function ProjectCard({ project, className = "" }: { project: any; className?: st
 }
 
 // Three Column Works Section Component
-function ThreeColumnWorksSection({ activeFilters }: { activeFilters: string[] }) {
-  const projects = [
-    {
-      title: "MAITREYA, LOGO DESIGN, IDENTITY, PACKAGING",
-      image: "/placeholder.svg?height=150&width=200",
-      height: "300px",
-      categories: ["IDENTITY", "PACKAGING"],
-      slug: "maitreya-logo-design",
-    },
-    {
-      title: "DERZHSTAT, IDENTITY",
-      image: "/placeholder.svg?height=125&width=200",
-      height: "300px",
-      categories: ["IDENTITY"],
-      slug: "derzhstat-identity",
-    },
-    {
-      title: "CRIMES WITHOUT PUNISHMENT, 3D VISUALISATION",
-      image: "/placeholder.svg?height=175&width=200",
-      height: "300px",
-      categories: ["3D VISUALISATION"],
-      slug: "crimes-without-punishment",
-    },
-    {
-      title: "BICKERSTAFF, IDENTITY, CREATIVE CODING",
-      image: "/placeholder.svg?height=140&width=200",
-      height: "300px",
-      categories: ["IDENTITY", "CREATIVE CODING"],
-      slug: "bickerstaff-identity",
-    },
-    {
-      title: "BIRDING VISION, 3D VISUALISATION",
-      image: "/placeholder.svg?height=160&width=200",
-      height: "300px",
-      categories: ["3D VISUALISATION"],
-      slug: "birding-vision",
-    },
-    {
-      title: "FRESH BLACK COLD BREW, PACKAGING",
-      image: "/placeholder.svg?height=150&width=200",
-      height: "300px",
-      comingSoon: true,
-      categories: ["PACKAGING"],
-      slug: "fresh-black-cold-brew",
-    },
-    {
-      title: "GALYCHYNA, PACKAGING",
-      image: "/placeholder.svg?height=140&width=200",
-      height: "300px",
-      categories: ["PACKAGING"],
-      slug: "galychyna-packaging",
-    },
-    {
-      title: "LEZO, FONT DESIGN",
-      image: "/placeholder.svg?height=175&width=200",
-      height: "300px",
-      categories: ["IDENTITY"],
-      slug: "lezo-font-design",
-    },
-    {
-      title: "ETNODIM, 3D VISUALISATION, CLOTH SIMULATION",
-      image: "/placeholder.svg?height=150&width=200",
-      height: "300px",
-      categories: ["3D VISUALISATION"],
-      slug: "etnodim-3d-visualisation",
-    },
-    {
-      title: "GALYCHYNA, VISUALS",
-      image: "/placeholder.svg?height=160&width=200",
-      height: "300px",
-      categories: ["IDENTITY"],
-      slug: "galychyna-visuals",
-    },
-    {
-      title: "PEN INK, PACKAGING",
-      image: "/placeholder.svg?height=145&width=200",
-      height: "300px",
-      categories: ["PACKAGING"],
-      slug: "pen-ink-packaging",
-    },
-    {
-      title: "BRAND UKRAINE, IDENTITY",
-      image: "/placeholder.svg?height=155&width=200",
-      height: "300px",
-      categories: ["IDENTITY"],
-      slug: "brand-ukraine-identity",
-    },
-  ]
-
+function ThreeColumnWorksSection({ activeFilters, projects }: { activeFilters: string[]; projects: CaseProject[] }) {
   // Filter projects based on active filters
   const filteredProjects =
     activeFilters.length === 0
       ? projects
-      : projects.filter((project) => project.categories.some((category) => activeFilters.includes(category)))
+      : projects.filter((project) => project.categoryTags.some((category) => activeFilters.includes(category)))
 
   const displayedProjects = filteredProjects.slice(0, 12)
 
@@ -200,8 +114,73 @@ function ThreeColumnWorksSection({ activeFilters }: { activeFilters: string[] })
 
 export default function Home() {
   const [activeFilters, setActiveFilters] = useState<string[]>([])
+  const [projects, setProjects] = useState<CaseProject[]>([])
+  const [loading, setLoading] = useState(true)
+  const [dataSource, setDataSource] = useState<"database" | "fallback">("fallback")
 
-  const filterCategories = ["PACKAGING", "IDENTITY", "3D VISUALISATION", "CREATIVE CODING"]
+  // Fetch cases from CMS
+  useEffect(() => {
+    const fetchCases = async () => {
+      try {
+        console.log("🔄 Fetching cases for homepage...")
+        const result = await getCaseProjects()
+        
+        if (result.success && result.data.length > 0) {
+          console.log("✅ Successfully loaded cases from database:", result.data.length)
+          setProjects(result.data)
+          setDataSource("database")
+        } else {
+          console.log("⚠️ No cases found, using fallback data")
+          // Fallback projects if CMS fails
+          setProjects([
+            {
+              id: "fallback-1",
+              projectTitle: "MAITREYA, LOGO DESIGN, IDENTITY, PACKAGING",
+              categoryTags: ["IDENTITY", "PACKAGING"],
+              description: "",
+              team: "",
+              introImage: "/placeholder.svg?height=150&width=200",
+              projectMedia: [],
+              draftProcess: [],
+              addMedia: [],
+              publish: true,
+              link: "",
+              slug: "maitreya-logo-design",
+              comingSoon: false,
+            },
+            {
+              id: "fallback-2", 
+              projectTitle: "FRESH BLACK COLD BREW, PACKAGING",
+              categoryTags: ["PACKAGING"],
+              description: "",
+              team: "",
+              introImage: "/placeholder.svg?height=150&width=200",
+              projectMedia: [],
+              draftProcess: [],
+              addMedia: [],
+              publish: true,
+              link: "",
+              slug: "fresh-black-cold-brew",
+              comingSoon: true,
+            },
+          ])
+          setDataSource("fallback")
+        }
+      } catch (error) {
+        console.error("❌ Error fetching cases:", error)
+        setProjects([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCases()
+  }, [])
+
+  // Generate filter categories from actual project data
+  const filterCategories = Array.from(
+    new Set(projects.flatMap((project) => project.categoryTags))
+  ).sort()
 
   const toggleFilter = (filter: string) => {
     setActiveFilters((prev) => (prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter]))
@@ -344,8 +323,28 @@ export default function Home() {
           })}
         </div>
 
+        {/* Data Source Indicator */}
+        {dataSource === "fallback" && (
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="text-sm text-yellow-800">
+              ⚠️ Using fallback data. Check{" "}
+              <a href="/cases-debug" className="underline">
+                Cases Debug
+              </a>{" "}
+              to troubleshoot the database connection.
+            </p>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-16">
+            <p className="text-gray-500">Loading projects...</p>
+          </div>
+        )}
+
         {/* Three Column Works Section */}
-        <ThreeColumnWorksSection activeFilters={activeFilters} />
+        {!loading && <ThreeColumnWorksSection activeFilters={activeFilters} projects={projects} />}
 
         {/* Footer Section */}
         <Footer />
