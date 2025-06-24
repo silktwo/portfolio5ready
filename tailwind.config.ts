@@ -23,6 +23,7 @@ const config: Config = {
       fontFamily: {
         "pp-neue-montreal": ["PP Neue Montreal", "sans-serif"],
         sans: ["PP Neue Montreal", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        mono: ["Roboto Mono", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

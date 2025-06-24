@@ -77,25 +77,25 @@ function ThreeColumnWorksSection({ activeFilters, projects }: { activeFilters: s
     <section className="w-full mt-8 mb-16">
       {/* Mobile: Single column */}
       <div className="grid grid-cols-1 gap-[8px] md:hidden">
-        {displayedProjects.map((project, index) => (
-          <ProjectCard key={index} project={project} />
+        {filteredProjects.map((project, index) => (
+          <ProjectCard key={`${project.slug || project.id}-${index}`} project={project} />
         ))}
       </div>
 
       {/* Tablet: Two columns */}
       <div className="hidden md:grid lg:hidden grid-cols-2 gap-x-[10px] gap-y-[8px]">
         <div className="flex flex-col gap-[8px]">
-          {displayedProjects
+          {filteredProjects
             .filter((_, index) => index % 2 === 0)
             .map((project, index) => (
-              <ProjectCard key={index} project={project} />
+              <ProjectCard key={`${project.slug || project.id}-${index}`} project={project} />
             ))}
         </div>
         <div className="flex flex-col gap-[8px]">
-          {displayedProjects
+          {filteredProjects
             .filter((_, index) => index % 2 === 1)
             .map((project, index) => (
-              <ProjectCard key={index} project={project} />
+              <ProjectCard key={`${project.slug || project.id}-${index}`} project={project} />
             ))}
         </div>
       </div>

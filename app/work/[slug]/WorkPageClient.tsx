@@ -181,7 +181,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
           <div className="flex flex-col gap-1">
             <button
               onClick={() => scrollToSection("project")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-colors ${
                 activeSection === "project"
                   ? "bg-[#eaeaea] text-[#202020]"
                   : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
@@ -191,7 +191,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             </button>
             <button
               onClick={() => scrollToSection("info")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                 activeSection === "info"
                   ? "bg-[#eaeaea] text-[#202020]"
                   : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
@@ -201,7 +201,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                 activeSection === "gallery"
                   ? "bg-[#eaeaea] text-[#202020]"
                   : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
@@ -212,7 +212,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             {hasDrafts && (
               <button
                 onClick={() => scrollToSection("drafts")}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                   activeSection === "drafts"
                     ? "bg-[#eaeaea] text-[#202020]"
                     : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
@@ -223,7 +223,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             )}
             <button
               onClick={() => scrollToSection("contact")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
                 activeSection === "contact"
                   ? "bg-[#eaeaea] text-[#202020]"
                   : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
@@ -366,7 +366,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                      className="w-full h-full object-cover block rounded-[6px]"
+                      className="w-full h-full object-cover block"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -386,7 +386,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                          className="w-full h-full object-cover block rounded-[6px]"
+                          className="w-full h-full object-cover block"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -394,7 +394,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
-                          className="w-full h-full object-cover block rounded-[6px]"
+                          className="w-full h-full object-cover block"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -407,7 +407,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                        className="w-full h-full object-cover block rounded-[6px]"
+                        className="w-full h-full object-cover block"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
