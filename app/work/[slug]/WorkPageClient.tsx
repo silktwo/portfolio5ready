@@ -251,7 +251,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
   // Handle scroll to update active section
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["project", "info", "gallery", "drafts", "contact"]
+      const sections = ["project", "gallery", "drafts", "contact"]
       const scrollPosition = window.scrollY + window.innerHeight / 2
 
       // Check if we're near the bottom of the page
@@ -325,16 +325,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
             >
               {caseProject.projectTitle.toUpperCase()}
             </button>
-            <button
-              onClick={() => scrollToSection("info")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
-                activeSection === "info"
-                  ? "bg-[#eaeaea] text-[#202020]"
-                  : "bg-transparent text-[#eaeaea] hover:bg-gray-800"
-              }`}
-            >
-              PROJECT INFO
-            </button>
+            
             <button
               onClick={() => scrollToSection("gallery")}
               className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
@@ -381,46 +372,11 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         <div className="absolute inset-0 bg-black bg-opacity-20" />
       </section>
 
-      {/* Project Information Section */}
-      <section id="info" className="py-16">
-        <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
-          {/* Project Information Header */}
-          <div className="text-center mb-8">
-            <h2 className="font-bold text-black text-[11px] tracking-[0] leading-[normal] mb-4">PROJECT INFORMATION</h2>
-          </div>
-
-          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-12 max-w-[800px] mx-auto">
-            {/* Description - Left Side */}
-            <div className="flex-1">
-              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">DESCRIPTION:</h3>
-              <p className="font-medium text-black text-[12px] tracking-[0] leading-[normal]">
-                {caseProject.description}
-              </p>
-            </div>
-
-            {/* Team Credits - Right Side with Roboto Mono */}
-            <div className="w-full lg:w-[300px]">
-              <h3 className="font-medium text-black text-[11px] mb-4 tracking-[0] leading-[normal]">TEAM:</h3>
-              <div className="space-y-2">
-                {teamMembers.map((member, index) => (
-                  <div
-                    key={index}
-                    className={`font-mono text-[11px] tracking-[0] leading-[normal] ${
-                      member.isPrimary ? "text-black" : "text-[#939393]"
-                    }`}
-                    style={{ fontFamily: "Roboto Mono, monospace" }}
-                  >
-                    {member.role}: {member.name}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Full-width images without gaps after description */}
+      {/* Gallery starts immediately after cover image */}
+      <section id="gallery">
+        {/* Full-width images without gaps */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 0 && (
-          <div className="mt-16" style={{ lineHeight: 0 }}>
+          <div style={{ lineHeight: 0 }}>
             {caseProject.projectMedia.slice(0, 3).map((image, index) => {
               // Pattern: 2 side-by-side (index 0–1) → 1 full (index 2)
               const isFullWidth = index === 2
@@ -485,9 +441,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         )}
       </section>
 
-      {/* Gallery Section - No title, continue alternating layout */}
-      <section id="gallery">
-        {/* Continue 2→full pattern without gaps */}
+      {/* Continue gallery with remaining images */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 3 && (
           <div style={{ lineHeight: 0 }}>
             {caseProject.projectMedia.slice(3).map((image, index) => {
