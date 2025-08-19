@@ -95,7 +95,8 @@ function ImageModal({
       <img
         src={currentImage.src || "/placeholder.svg"}
         alt={currentImage.alt}
-        className="max-w-full max-h-full w-auto h-auto object-contain"
+        className="max-w-[100vw] max-h-[100vh] object-contain block"
+        style={{ margin: 0, padding: 0 }}
         onClick={(e) => e.stopPropagation()}
       />
     </div>
@@ -421,14 +422,19 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
         {caseProject.projectMedia && caseProject.projectMedia.length > 0 && (
           <div className="mt-16" style={{ lineHeight: 0 }}>
             {caseProject.projectMedia.slice(0, 3).map((image, index) => {
-              // Determine layout: every 3rd image (index 2, 5, 8, etc.) is full-width
-              const isFullWidth = (index + 1) % 3 === 0
-              const isPairStart = (index + 1) % 3 === 1
+              // Pattern: 2 side-by-side (index 0–1) → 1 full (index 2)
+              const isFullWidth = index === 2
+              const isPairStart = index === 0
 
               if (isFullWidth) {
-                // Full-width image
+                // Full-width image (3rd image)
                 return (
-                  <div key={index} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index, caseProject.projectMedia)}>
+                  <div
+                    key={index}
+                    className="w-full cursor-pointer block"
+                    style={{ lineHeight: 0 }}
+                    onClick={() => openModal(index, caseProject.projectMedia)}
+                  >
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Image ${index + 1}`}
@@ -438,45 +444,40 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   </div>
                 )
               } else if (isPairStart) {
-                // Start of a pair - check if there's a next image
-                const nextImage = caseProject.projectMedia[index + 1]
-                if (nextImage) {
-                  // Render pair without gap
-                  return (
-                    <div key={`pair-${index}`} className="flex" style={{ gap: 0, lineHeight: 0 }}>
-                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index, caseProject.projectMedia)}>
-                        <img
-                          src={image || "/placeholder.svg"}
-                          alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                          className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                          style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
-                        />
-                      </div>
-                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index + 1, caseProject.projectMedia)}>
-                        <img
-                          src={nextImage || "/placeholder.svg"}
-                          alt={`${caseProject.projectTitle} - Image ${index + 2}`}
-                          className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                          style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
-                        />
-                      </div>
-                    </div>
-                  )
-                } else {
-                  // Single image if no pair
-                  return (
-                    <div key={index} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index, caseProject.projectMedia)}>
+                // Pair: 0th and 1st
+                const nextImage = caseProject.projectMedia[1]
+                return (
+                  <div key={`pair-${index}`} className="flex" style={{ gap: 0, lineHeight: 0 }}>
+                    <div
+                      className="w-1/2 cursor-pointer block"
+                      style={{ lineHeight: 0 }}
+                      onClick={() => openModal(0, caseProject.projectMedia)}
+                    >
                       <img
                         src={image || "/placeholder.svg"}
-                        alt={`${caseProject.projectTitle} - Image ${index + 1}`}
+                        alt={`${caseProject.projectTitle} - Image 1`}
                         className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                         style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                       />
                     </div>
-                  )
-                }
+                    {nextImage && (
+                      <div
+                        className="w-1/2 cursor-pointer block"
+                        style={{ lineHeight: 0 }}
+                        onClick={() => openModal(1, caseProject.projectMedia)}
+                      >
+                        <img
+                          src={nextImage || "/placeholder.svg"}
+                          alt={`${caseProject.projectTitle} - Image 2`}
+                          className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
+                          style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )
               } else {
-                // Skip pair end images as they're handled in pair start
+                // skip pair end (index 1), as it's rendered in the block above
                 return null
               }
             })}
@@ -486,18 +487,26 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
 
       {/* Gallery Section - No title, continue alternating layout */}
       <section id="gallery">
-        {/* Continue alternating layout for remaining images without gaps */}
+        {/* Continue 2→full pattern without gaps */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 3 && (
           <div style={{ lineHeight: 0 }}>
             {caseProject.projectMedia.slice(3).map((image, index) => {
-              const actualIndex = index + 3 // Adjust for sliced array
-              const isFullWidth = (actualIndex + 1) % 3 === 0
-              const isPairStart = (actualIndex + 1) % 3 === 1
+              const actualIndex = index + 3 // real index in the full array
+              // Pattern should remain 2→full in global index:
+              // groups of 3: [two side-by-side: mod 3 = 1,2] → [full: mod 3 = 0]
+              const mod = (actualIndex + 1) % 3
+              const isFullWidth = mod === 0
+              const isPairStart = mod === 1
 
               if (isFullWidth) {
                 // Full-width image
                 return (
-                  <div key={actualIndex} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
+                  <div
+                    key={actualIndex}
+                    className="w-full cursor-pointer block"
+                    style={{ lineHeight: 0 }}
+                    onClick={() => openModal(actualIndex, caseProject.projectMedia)}
+                  >
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
@@ -507,17 +516,20 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   </div>
                 )
               } else if (isPairStart) {
-                // Start of a pair - check if there's a next image
+                // Start of pair — render both at once (actualIndex and actualIndex+1)
                 const nextImage = caseProject.projectMedia[actualIndex + 1]
                 if (nextImage) {
-                  // Render pair without gap
                   return (
                     <div
                       key={`gallery-pair-${actualIndex}`}
                       className="flex"
                       style={{ gap: 0, lineHeight: 0 }}
                     >
-                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
+                      <div
+                        className="w-1/2 cursor-pointer block"
+                        style={{ lineHeight: 0 }}
+                        onClick={() => openModal(actualIndex, caseProject.projectMedia)}
+                      >
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
@@ -525,7 +537,11 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                           style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                         />
                       </div>
-                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex + 1, caseProject.projectMedia)}>
+                      <div
+                        className="w-1/2 cursor-pointer block"
+                        style={{ lineHeight: 0 }}
+                        onClick={() => openModal(actualIndex + 1, caseProject.projectMedia)}
+                      >
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
@@ -536,9 +552,14 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     </div>
                   )
                 } else {
-                  // Single image if no pair
+                  // if only one remains — show it separately
                   return (
-                    <div key={actualIndex} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
+                    <div
+                      key={actualIndex}
+                      className="w-full cursor-pointer block"
+                      style={{ lineHeight: 0 }}
+                      onClick={() => openModal(actualIndex, caseProject.projectMedia)}
+                    >
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
@@ -549,7 +570,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   )
                 }
               } else {
-                // Skip pair end images as they're handled in pair start
+                // end of pair — skip (rendered together with start)
                 return null
               }
             })}
