@@ -420,7 +420,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
 
         {/* Full-width images without gaps after description */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 0 && (
-          <div className="mt-16" style={{ lineHeight: 0 }}>
+          <div className="" style={{ lineHeight: 0 }}>
             {caseProject.projectMedia.slice(0, 3).map((image, index) => {
               // Pattern: 2 side-by-side (index 0–1) → 1 full (index 2)
               const isFullWidth = index === 2
