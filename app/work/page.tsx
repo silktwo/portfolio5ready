@@ -1,57 +1,25 @@
-"use client"
-
-import type { Metadata } from "next"
 import Link from "next/link"
-import { useState, useEffect } from "react"
-
 import { Badge } from "@/components/ui/badge"
-import { getCaseProjects, type CaseProject } from "@/lib/notion-cases"
+import { getCachedData } from "@/lib/cache"
+import { type CaseProject } from "@/lib/notion-cases"
+import { DEFAULT_REVALIDATE } from "@/content.config"
 
-export default function WorkPage() {
-  const [projects, setProjects] = useState<CaseProject[]>([])
-  const [loading, setLoading] = useState(true)
-  const [dataSource, setDataSource] = useState<"database" | "fallback">("fallback")
+export const revalidate = DEFAULT_REVALIDATE
 
-  // Fetch cases from API
-  useEffect(() => {
-    const fetchCases = async () => {
-      try {
-        console.log("🔄 Fetching cases for work page...")
-        const response = await fetch("/api/cases", {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        })
+export default async function WorkPage() {
+  const projects = await getCachedData<CaseProject[]>('cases') as CaseProject[] || []
 
-        const result = await response.json()
+  console.log(`📄 Work page rendered with ${projects.length} projects (cached)`)
 
-        if (result.success && result.data.length > 0) {
-          console.log("✅ Successfully loaded cases from database:", result.data.length)
-          setProjects(result.data)
-          setDataSource("database")
-        } else {
-          console.log("❌ Failed to load cases from database")
-          setProjects([])
-          setDataSource("fallback")
-        }
-      } catch (error) {
-        console.error("❌ Error fetching cases:", error)
-        setProjects([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCases()
-  }, [])
-
-  if (loading) {
+  if (!projects || projects.length === 0) {
     return (
       <div className="container mx-auto py-10">
         <h1 className="text-3xl font-bold mb-6">Work</h1>
-        <div className="flex justify-center items-center py-16">
-          <p className="text-gray-500">Loading projects...</p>
+        <div className="text-center py-16">
+          <p className="text-gray-500 mb-4">No projects found</p>
+          <p className="text-sm text-gray-400">
+            Make sure your Notion database has published projects with the required fields.
+          </p>
         </div>
       </div>
     )
@@ -60,19 +28,6 @@ export default function WorkPage() {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Work</h1>
-      
-      {/* Data Source Indicator */}
-      {dataSource === "fallback" && (
-        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p className="text-sm text-yellow-800">
-            ⚠️ No projects found. Check{" "}
-            <a href="/cases-debug" className="underline">
-              Cases Debug
-            </a>{" "}
-            to troubleshoot the database connection.
-          </p>
-        </div>
-      )}
 
       {/* Project Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -114,7 +69,7 @@ export default function WorkPage() {
         ))}
       </div>
 
-      {projects.length === 0 && !loading && (
+      {projects.length === 0 && (
         <div className="text-center py-16">
           <p className="text-gray-500 mb-4">No projects found</p>
           <p className="text-sm text-gray-400">

@@ -1,7 +1,6 @@
-
-import { getCaseBySlug } from "@/lib/notion-cases"
+import { notFound } from "next/navigation"
 import WorkPageClient from "./WorkPageClient"
-import type { Metadata } from "next"
+import { getCaseBySlug, type CaseProject } from "@/lib/notion-cases"
 
 // Fallback projects for when database is not accessible
 const fallbackProjects: Record<string, any> = {
@@ -54,25 +53,25 @@ function findProjectBySlug(projects: any[], targetSlug: string) {
   // First try exact match
   let project = projects.find(p => p.slug === targetSlug)
   if (project) return project
-  
+
   // Try partial matches for backward compatibility
   const targetWords = targetSlug.toLowerCase().split('-')
   const firstWord = targetWords[0]
-  
+
   // Look for projects that start with the first word
   project = projects.find(p => {
     const projectSlug = p.slug.toLowerCase()
     return projectSlug.startsWith(firstWord) || projectSlug.includes(firstWord)
   })
-  
+
   if (project) return project
-  
+
   // Try matching by project title
   project = projects.find(p => {
     const titleWords = p.projectTitle.toLowerCase().split(/[\s,]+/)
     return titleWords.some(word => targetWords.includes(word))
   })
-  
+
   return project
 }
 
@@ -85,7 +84,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const resolvedParams = await params
-    
+
     // Try to get from database
     const project = await getCaseBySlug(resolvedParams.slug)
 
@@ -127,11 +126,11 @@ export default async function WorkPage({ params }: Props) {
     // If not found with exact slug, try enhanced matching
     if (!project) {
       console.log(`⚠️ Server: Project not found with exact slug, trying enhanced matching`)
-      
+
       // Get all projects and try enhanced matching
       const { getCaseProjects } = await import("@/lib/notion-cases")
       const allProjectsResult = await getCaseProjects()
-      
+
       if (allProjectsResult.success && allProjectsResult.data.length > 0) {
         project = findProjectBySlug(allProjectsResult.data, resolvedParams.slug)
         if (project) {
