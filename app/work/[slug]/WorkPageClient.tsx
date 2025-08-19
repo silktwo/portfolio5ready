@@ -7,35 +7,98 @@ import BackToTop from "@/components/back-to-top"
 import { useRouter } from "next/navigation"
 import { getCaseProjects, type CaseProject } from "@/lib/notion-cases"
 
-// Modal component (for image preview)
-interface ImageModalProps {
+// Image Modal Component with Navigation (same as personal projects)
+function ImageModal({
+  images,
+  currentIndex,
+  isOpen,
+  onClose,
+  onNext,
+  onPrevious,
+}: {
+  images: { src: string; alt: string }[]
+  currentIndex: number
   isOpen: boolean
-  imageUrl: string
   onClose: () => void
-}
+  onNext: () => void
+  onPrevious: () => void
+}) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose()
+      } else if (e.key === "ArrowLeft") {
+        onPrevious()
+      } else if (e.key === "ArrowRight") {
+        onNext()
+      }
+    }
 
-const ImageModal = ({ isOpen, imageUrl, onClose }: ImageModalProps) => {
-  if (!isOpen) return null
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape)
+      document.body.style.overflow = "hidden"
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape)
+      document.body.style.overflow = "unset"
+    }
+  }, [isOpen, onClose, onNext, onPrevious])
+
+  if (!isOpen || !images[currentIndex]) return null
+
+  const currentImage = images[currentIndex]
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4"
-      onClick={onClose}
-    >
-      <div className="relative w-full max-w-4xl max-h-[80vh] overflow-hidden rounded-lg">
-        <img
-          src={imageUrl}
-          alt="Enlarged image"
-          className="w-full h-full object-contain"
-          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the image itself
-        />
+    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+        {/* Close button */}
         <button
-          className="absolute top-2 right-2 text-white text-2xl font-bold leading-none p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-75 transition-opacity"
           onClick={onClose}
-          aria-label="Close image modal"
+          className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors z-10"
         >
-          &times;
+          <span className="text-2xl">&times;</span>
         </button>
+
+        {/* Previous button */}
+        {images.length > 1 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onPrevious()
+            }}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
+          >
+            <span className="text-xl">‹</span>
+          </button>
+        )}
+
+        {/* Next button */}
+        {images.length > 1 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onNext()
+            }}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
+          >
+            <span className="text-xl">›</span>
+          </button>
+        )}
+
+        {/* Image counter */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded-full">
+            {currentIndex + 1} / {images.length}
+          </div>
+        )}
+
+        <img
+          src={currentImage.src || "/placeholder.svg"}
+          alt={currentImage.alt}
+          className="max-w-[calc(90vw-8rem)] max-h-[calc(90vh-8rem)] object-contain"
+          onClick={(e) => e.stopPropagation()}
+        />
       </div>
     </div>
   )
@@ -64,18 +127,42 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
   const [loading, setLoading] = useState(false)
   const [activeSection, setActiveSection] = useState("project")
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedImageUrl, setSelectedImageUrl] = useState("")
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [currentImageArray, setCurrentImageArray] = useState<string[]>([])
+
+  // Prepare images for modal
+  const createModalImages = (mediaArray: string[] | undefined) => {
+    if (!mediaArray) return []
+    return mediaArray.map((image, index) => ({
+      src: image,
+      alt: `${caseProject.projectTitle} - Image ${index + 1}`,
+    }))
+  }
 
   const openModal = (index: number, mediaArray: string[] | undefined) => {
     if (mediaArray && mediaArray[index]) {
-      setSelectedImageUrl(mediaArray[index])
+      setCurrentImageArray(mediaArray)
+      setCurrentImageIndex(index)
       setIsModalOpen(true)
     }
   }
 
   const closeModal = () => {
     setIsModalOpen(false)
-    setSelectedImageUrl("")
+    setCurrentImageIndex(0)
+    setCurrentImageArray([])
+  }
+
+  const nextImage = () => {
+    if (currentImageArray.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % currentImageArray.length)
+    }
+  }
+
+  const previousImage = () => {
+    if (currentImageArray.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + currentImageArray.length) % currentImageArray.length)
+    }
   }
 
 
@@ -347,7 +434,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                      className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
+                      className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -363,7 +450,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                          className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
+                          className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -371,7 +458,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 2}`}
-                          className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
+                          className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -384,7 +471,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                        className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
+                        className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -400,7 +487,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
       </section>
 
       {/* Gallery Section - No title, continue alternating layout */}
-      <section id="gallery" className="py-0">
+      <section id="gallery">
         {/* Continue alternating layout for remaining images without gaps */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 3 && (
           <div>
@@ -416,7 +503,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                      className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
+                      className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -436,7 +523,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                          className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
+                          className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -444,7 +531,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
-                          className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
+                          className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -457,7 +544,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                        className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
+                        className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -490,7 +577,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   <img
                     src={image || "/placeholder.svg"}
                     alt={`${caseProject.projectTitle} - Draft ${index + 1}`}
-                    className="h-[400px] w-auto object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
+                    className="h-[400px] w-auto object-cover block hover:opacity-90 transition-opacity"
                   />
                 </div>
               ))}
@@ -531,7 +618,14 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
       <BackToTop />
 
       {/* Image Modal */}
-      <ImageModal isOpen={isModalOpen} imageUrl={selectedImageUrl} onClose={closeModal} />
+      <ImageModal
+        images={createModalImages(currentImageArray)}
+        currentIndex={currentImageIndex}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onNext={nextImage}
+        onPrevious={previousImage}
+      />
     </div>
   )
 }
