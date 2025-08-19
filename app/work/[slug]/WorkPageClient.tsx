@@ -7,7 +7,7 @@ import BackToTop from "@/components/back-to-top"
 import { useRouter } from "next/navigation"
 import { getCaseProjects, type CaseProject } from "@/lib/notion-cases"
 
-// Image Modal Component with Navigation (same as personal projects)
+// Image Modal Component with full-screen display
 function ImageModal({
   images,
   currentIndex,
@@ -50,56 +50,54 @@ function ImageModal({
   const currentImage = images[currentIndex]
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
-        {/* Close button */}
+    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center" onClick={onClose}>
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10 text-3xl font-light"
+      >
+        ×
+      </button>
+
+      {/* Previous button */}
+      {images.length > 1 && (
         <button
-          onClick={onClose}
-          className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors z-10"
+          onClick={(e) => {
+            e.stopPropagation()
+            onPrevious()
+          }}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 text-2xl bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center"
         >
-          <span className="text-2xl">&times;</span>
+          ‹
         </button>
+      )}
 
-        {/* Previous button */}
-        {images.length > 1 && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onPrevious()
-            }}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
-          >
-            <span className="text-xl">‹</span>
-          </button>
-        )}
+      {/* Next button */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onNext()
+          }}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 text-2xl bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center"
+        >
+          ›
+        </button>
+      )}
 
-        {/* Next button */}
-        {images.length > 1 && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onNext()
-            }}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
-          >
-            <span className="text-xl">›</span>
-          </button>
-        )}
+      {/* Image counter */}
+      {images.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded-full">
+          {currentIndex + 1} / {images.length}
+        </div>
+      )}
 
-        {/* Image counter */}
-        {images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded-full">
-            {currentIndex + 1} / {images.length}
-          </div>
-        )}
-
-        <img
-          src={currentImage.src || "/placeholder.svg"}
-          alt={currentImage.alt}
-          className="max-w-[calc(90vw-8rem)] max-h-[calc(90vh-8rem)] object-contain"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </div>
+      <img
+        src={currentImage.src || "/placeholder.svg"}
+        alt={currentImage.alt}
+        className="max-w-full max-h-full w-auto h-auto object-contain"
+        onClick={(e) => e.stopPropagation()}
+      />
     </div>
   )
 }
@@ -421,7 +419,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
 
         {/* Full-width images without gaps after description */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 0 && (
-          <div className="mt-16">
+          <div className="mt-16" style={{ lineHeight: 0 }}>
             {caseProject.projectMedia.slice(0, 3).map((image, index) => {
               // Determine layout: every 3rd image (index 2, 5, 8, etc.) is full-width
               const isFullWidth = (index + 1) % 3 === 0
@@ -430,12 +428,12 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               if (isFullWidth) {
                 // Full-width image
                 return (
-                  <div key={index} className="w-full cursor-pointer" onClick={() => openModal(index, caseProject.projectMedia)}>
+                  <div key={index} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index, caseProject.projectMedia)}>
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Image ${index + 1}`}
                       className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                      style={{ margin: 0, padding: 0, display: "block" }}
+                      style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                     />
                   </div>
                 )
@@ -445,21 +443,21 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                 if (nextImage) {
                   // Render pair without gap
                   return (
-                    <div key={`pair-${index}`} className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 0 }}>
-                      <div className="w-full cursor-pointer" onClick={() => openModal(index, caseProject.projectMedia)}>
+                    <div key={`pair-${index}`} className="flex" style={{ gap: 0, lineHeight: 0 }}>
+                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index, caseProject.projectMedia)}>
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 1}`}
                           className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                          style={{ margin: 0, padding: 0, display: "block" }}
+                          style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                         />
                       </div>
-                      <div className="w-full cursor-pointer" onClick={() => openModal(index + 1, caseProject.projectMedia)}>
+                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index + 1, caseProject.projectMedia)}>
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 2}`}
                           className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                          style={{ margin: 0, padding: 0, display: "block" }}
+                          style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                         />
                       </div>
                     </div>
@@ -467,12 +465,12 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                 } else {
                   // Single image if no pair
                   return (
-                    <div key={index} className="w-full cursor-pointer" onClick={() => openModal(index, caseProject.projectMedia)}>
+                    <div key={index} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(index, caseProject.projectMedia)}>
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Image ${index + 1}`}
                         className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                        style={{ margin: 0, padding: 0, display: "block" }}
+                        style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                       />
                     </div>
                   )
@@ -490,7 +488,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
       <section id="gallery">
         {/* Continue alternating layout for remaining images without gaps */}
         {caseProject.projectMedia && caseProject.projectMedia.length > 3 && (
-          <div>
+          <div style={{ lineHeight: 0 }}>
             {caseProject.projectMedia.slice(3).map((image, index) => {
               const actualIndex = index + 3 // Adjust for sliced array
               const isFullWidth = (actualIndex + 1) % 3 === 0
@@ -499,12 +497,12 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               if (isFullWidth) {
                 // Full-width image
                 return (
-                  <div key={actualIndex} className="w-full cursor-pointer" onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
+                  <div key={actualIndex} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
                       className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                      style={{ margin: 0, padding: 0, display: "block" }}
+                      style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                     />
                   </div>
                 )
@@ -516,23 +514,23 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   return (
                     <div
                       key={`gallery-pair-${actualIndex}`}
-                      className="grid grid-cols-1 md:grid-cols-2"
-                      style={{ gap: 0 }}
+                      className="flex"
+                      style={{ gap: 0, lineHeight: 0 }}
                     >
-                      <div className="w-full cursor-pointer" onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
+                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
                           className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                          style={{ margin: 0, padding: 0, display: "block" }}
+                          style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                         />
                       </div>
-                      <div className="w-full cursor-pointer" onClick={() => openModal(actualIndex + 1, caseProject.projectMedia)}>
+                      <div className="w-1/2 cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex + 1, caseProject.projectMedia)}>
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
                           className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                          style={{ margin: 0, padding: 0, display: "block" }}
+                          style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                         />
                       </div>
                     </div>
@@ -540,12 +538,12 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                 } else {
                   // Single image if no pair
                   return (
-                    <div key={actualIndex} className="w-full cursor-pointer" onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
+                    <div key={actualIndex} className="w-full cursor-pointer block" style={{ lineHeight: 0 }} onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
                         className="w-full h-auto object-cover block hover:opacity-90 transition-opacity"
-                        style={{ margin: 0, padding: 0, display: "block" }}
+                        style={{ margin: 0, padding: 0, display: "block", lineHeight: 0 }}
                       />
                     </div>
                   )
