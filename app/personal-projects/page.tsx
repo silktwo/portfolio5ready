@@ -96,7 +96,7 @@ function ImageModal({
         <img
           src={currentImage.src || "/placeholder.svg"}
           alt={currentImage.alt}
-          className="max-w-full max-h-full object-contain"
+          className="max-w-[calc(90vw-8rem)] max-h-[calc(90vh-8rem)] object-contain"
           onClick={(e) => e.stopPropagation()}
         />
       </div>

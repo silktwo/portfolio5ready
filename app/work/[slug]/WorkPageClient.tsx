@@ -7,6 +7,41 @@ import BackToTop from "@/components/back-to-top"
 import { useRouter } from "next/navigation"
 import { getCaseProjects, type CaseProject } from "@/lib/notion-cases"
 
+// Modal component (for image preview)
+interface ImageModalProps {
+  isOpen: boolean
+  imageUrl: string
+  onClose: () => void
+}
+
+const ImageModal = ({ isOpen, imageUrl, onClose }: ImageModalProps) => {
+  if (!isOpen) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4"
+      onClick={onClose}
+    >
+      <div className="relative w-full max-w-4xl max-h-[80vh] overflow-hidden rounded-lg">
+        <img
+          src={imageUrl}
+          alt="Enlarged image"
+          className="w-full h-full object-contain"
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the image itself
+        />
+        <button
+          className="absolute top-2 right-2 text-white text-2xl font-bold leading-none p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-75 transition-opacity"
+          onClick={onClose}
+          aria-label="Close image modal"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  )
+}
+
+
 interface TeamMember {
   role: string
   name: string
@@ -28,6 +63,21 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [activeSection, setActiveSection] = useState("project")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedImageUrl, setSelectedImageUrl] = useState("")
+
+  const openModal = (index: number, mediaArray: string[] | undefined) => {
+    if (mediaArray && mediaArray[index]) {
+      setSelectedImageUrl(mediaArray[index])
+      setIsModalOpen(true)
+    }
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedImageUrl("")
+  }
+
 
   // Social links
   const socialLinks = [
@@ -293,11 +343,11 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               if (isFullWidth) {
                 // Full-width image
                 return (
-                  <div key={index} className="w-full">
+                  <div key={index} className="w-full cursor-pointer" onClick={() => openModal(index, caseProject.projectMedia)}>
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                      className="w-full h-full object-cover block rounded-[6px]"
+                      className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -309,19 +359,19 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                   // Render pair without gap
                   return (
                     <div key={`pair-${index}`} className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 0 }}>
-                      <div className="w-full">
+                      <div className="w-full cursor-pointer" onClick={() => openModal(index, caseProject.projectMedia)}>
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                          className="w-full h-full object-cover block rounded-[6px]"
+                          className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
-                      <div className="w-full" style={{ margin: 0, padding: 0 }}>
+                      <div className="w-full cursor-pointer" onClick={() => openModal(index + 1, caseProject.projectMedia)}>
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Image ${index + 2}`}
-                          className="w-full h-full object-cover block rounded-[6px]"
+                          className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -330,11 +380,11 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                 } else {
                   // Single image if no pair
                   return (
-                    <div key={index} className="w-full">
+                    <div key={index} className="w-full cursor-pointer" onClick={() => openModal(index, caseProject.projectMedia)}>
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Image ${index + 1}`}
-                        className="w-full h-full object-cover block rounded-[6px]"
+                        className="w-full h-full object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -362,11 +412,11 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
               if (isFullWidth) {
                 // Full-width image
                 return (
-                  <div key={actualIndex} className="w-full">
+                  <div key={actualIndex} className="w-full cursor-pointer" onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
                     <img
                       src={image || "/placeholder.svg"}
                       alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                      className="w-full h-full object-cover block"
+                      className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
                       style={{ margin: 0, padding: 0, display: "block" }}
                     />
                   </div>
@@ -382,19 +432,19 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                       className="grid grid-cols-1 md:grid-cols-2"
                       style={{ gap: 0 }}
                     >
-                      <div className="w-full">
+                      <div className="w-full cursor-pointer" onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
                         <img
                           src={image || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
-                      <div className="w-full" style={{ margin: 0, padding: 0 }}>
+                      <div className="w-full cursor-pointer" onClick={() => openModal(actualIndex + 1, caseProject.projectMedia)}>
                         <img
                           src={nextImage || "/placeholder.svg"}
                           alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 2}`}
-                          className="w-full h-full object-cover block"
+                          className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
                           style={{ margin: 0, padding: 0, display: "block" }}
                         />
                       </div>
@@ -403,11 +453,11 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
                 } else {
                   // Single image if no pair
                   return (
-                    <div key={actualIndex} className="w-full">
+                    <div key={actualIndex} className="w-full cursor-pointer" onClick={() => openModal(actualIndex, caseProject.projectMedia)}>
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${caseProject.projectTitle} - Gallery ${actualIndex + 1}`}
-                        className="w-full h-full object-cover block"
+                        className="w-full h-full object-cover block hover:opacity-90 transition-opacity"
                         style={{ margin: 0, padding: 0, display: "block" }}
                       />
                     </div>
@@ -436,11 +486,11 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
           <div className="w-full">
             <div className="flex overflow-x-auto">
               {caseProject.draftProcess.map((image, index) => (
-                <div key={index} className="flex-shrink-0">
+                <div key={index} className="flex-shrink-0 cursor-pointer" onClick={() => openModal(index, caseProject.draftProcess)}>
                   <img
                     src={image || "/placeholder.svg"}
                     alt={`${caseProject.projectTitle} - Draft ${index + 1}`}
-                    className="h-[400px] w-auto object-cover block rounded-[6px]"
+                    className="h-[400px] w-auto object-cover block rounded-[6px] hover:opacity-90 transition-opacity"
                   />
                 </div>
               ))}
@@ -479,6 +529,9 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
 
       {/* Back to Top Button */}
       <BackToTop />
+
+      {/* Image Modal */}
+      <ImageModal isOpen={isModalOpen} imageUrl={selectedImageUrl} onClose={closeModal} />
     </div>
   )
 }
