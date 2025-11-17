@@ -382,7 +382,7 @@ export default function WorkPageClient({ params, initialProject, dataSource }: P
       </section>
 
       {/* Project Information Section */}
-      <section id="info" className="py-16">
+      <section id="info" className="pt-16 pb-0">
         <div className="max-w-[1200px] mx-auto px-[20px] sm:px-[30px]">
           {/* Project Information Header */}
           <div className="text-center mb-8">
