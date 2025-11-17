@@ -7,5 +7,7 @@
     }
   ],
   "buildCommand": "pnpm install && pnpm build",
-  "installCommand": "pnpm install --shamefully-hoist"
+  "installCommand": "pnpm install --shamefully-hoist --no-optional",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
 }

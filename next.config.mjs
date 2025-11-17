@@ -12,6 +12,8 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose'
   },
+  // Optimize for serverless deployment
+  output: 'standalone',
 }
 
 export default nextConfig
