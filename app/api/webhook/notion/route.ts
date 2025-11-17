@@ -7,15 +7,38 @@ import { GLOBAL_CMS_TAG } from '@/content.config'
 
 export const dynamic = 'force-dynamic'
 
+function verifyNotionSignature(request: NextRequest, body: string, secret: string): boolean {
+  // Notion uses HMAC-SHA256 signature verification
+  const signature = request.headers.get('notion-signature')
+  if (!signature) return false
+  
+  try {
+    const crypto = require('crypto')
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(body)
+      .digest('hex')
+    
+    return signature === expectedSignature
+  } catch (error) {
+    console.error('Signature verification error:', error)
+    return false
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json()
+    const body = await request.text()
+    const payload = JSON.parse(body)
     
     // Verify webhook signature if secret is available
     const secret = process.env.NOTION_WEBHOOK_SECRET
     if (secret) {
-      // Notion webhook signature verification would go here
-      // For now, we'll skip signature verification
+      if (!verifyNotionSignature(request, body, secret)) {
+        console.warn('⚠️ Invalid Notion webhook signature')
+        return NextResponse.json({ message: 'Invalid signature' }, { status: 401 })
+      }
+      console.log('✅ Notion webhook signature verified')
     }
 
     const adapter = adapters.notion
@@ -26,6 +49,7 @@ export async function POST(request: NextRequest) {
     const { collection, slug } = adapter.webhookToCollectionAndSlug(payload)
     
     const actions: string[] = []
+    const warmPaths: string[] = []
 
     // Always revalidate global tag
     revalidateTag(GLOBAL_CMS_TAG)
@@ -42,16 +66,21 @@ export async function POST(request: NextRequest) {
         const path = collection === 'cases' ? `/work/${slug}` : `/${collection}/${slug}`
         revalidatePath(path)
         actions.push(`Revalidated path: ${path}`)
-        
-        // Warm the specific path
-        await warmCache([path])
-        actions.push(`Warmed path: ${path}`)
+        warmPaths.push(path)
       }
 
       // Warm list pages
       const listPath = collection === 'cases' ? '/work' : `/${collection}`
-      await warmCache([listPath])
-      actions.push(`Warmed list path: ${listPath}`)
+      warmPaths.push(listPath)
+      
+      // Warm homepage as well
+      warmPaths.push('/')
+    }
+
+    // Warm all paths
+    if (warmPaths.length > 0) {
+      await warmCache(warmPaths)
+      actions.push(`Warmed ${warmPaths.length} paths`)
     }
 
     console.log(`🪝 Notion webhook processed: ${actions.join(', ')}`)
@@ -59,7 +88,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       received: true,
       processed: true,
-      actions
+      actions,
+      warmedPaths: warmPaths
     })
   } catch (error) {
     console.error('Notion webhook error:', error)

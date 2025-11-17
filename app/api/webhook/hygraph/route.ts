@@ -7,20 +7,22 @@ import { GLOBAL_CMS_TAG } from '@/content.config'
 
 export const dynamic = 'force-dynamic'
 
-function verifyContentfulSignature(request: NextRequest, body: string, secret: string): boolean {
-  // Contentful uses HTTP Basic Auth or custom headers
-  const authHeader = request.headers.get('authorization')
-  const webhookHeader = request.headers.get('x-contentful-webhook-name')
+function verifyHygraphSignature(request: NextRequest, body: string, secret: string): boolean {
+  const signature = request.headers.get('gcms-signature')
+  if (!signature) return false
   
-  if (authHeader) {
-    const [scheme, credentials] = authHeader.split(' ')
-    if (scheme === 'Basic') {
-      const decoded = Buffer.from(credentials, 'base64').toString()
-      return decoded === secret
-    }
+  try {
+    const crypto = require('crypto')
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(body)
+      .digest('hex')
+    
+    return signature === expectedSignature
+  } catch (error) {
+    console.error('Signature verification error:', error)
+    return false
   }
-  
-  return !!webhookHeader // If webhook header is present, it's likely valid
 }
 
 export async function POST(request: NextRequest) {
@@ -28,19 +30,18 @@ export async function POST(request: NextRequest) {
     const body = await request.text()
     const payload = JSON.parse(body)
     
-    // Verify webhook if secret is available
-    const secret = process.env.CONTENTFUL_WEBHOOK_SECRET
+    const secret = process.env.HYGRAPH_WEBHOOK_SECRET
     if (secret) {
-      if (!verifyContentfulSignature(request, body, secret)) {
-        console.warn('⚠️ Invalid Contentful webhook')
-        return NextResponse.json({ message: 'Invalid webhook' }, { status: 401 })
+      if (!verifyHygraphSignature(request, body, secret)) {
+        console.warn('⚠️ Invalid Hygraph webhook signature')
+        return NextResponse.json({ message: 'Invalid signature' }, { status: 401 })
       }
-      console.log('✅ Contentful webhook verified')
+      console.log('✅ Hygraph webhook signature verified')
     }
     
-    const adapter = adapters.contentful
+    const adapter = adapters.hygraph
     if (!adapter.isAvailable()) {
-      return NextResponse.json({ message: 'Contentful adapter not available' }, { status: 400 })
+      return NextResponse.json({ message: 'Hygraph adapter not available' }, { status: 400 })
     }
 
     const { collection, slug } = adapter.webhookToCollectionAndSlug(payload)
@@ -48,11 +49,9 @@ export async function POST(request: NextRequest) {
     const actions: string[] = []
     const warmPaths: string[] = []
 
-    // Always revalidate global tag
     revalidateTag(GLOBAL_CMS_TAG)
     actions.push(`Revalidated global tag: ${GLOBAL_CMS_TAG}`)
 
-    // Handle collection-specific revalidation
     if (collection) {
       const collectionTag = adapter.tagFor(collection)
       revalidateTag(collectionTag)
@@ -62,11 +61,9 @@ export async function POST(request: NextRequest) {
         const path = `/${collection}/${slug}`
         revalidatePath(path)
         warmPaths.push(path)
-        actions.push(`Revalidated path: ${path}`)
       }
       
-      warmPaths.push(`/${collection}`)
-      warmPaths.push('/')
+      warmPaths.push(`/${collection}`, '/')
     }
 
     if (warmPaths.length > 0) {
@@ -74,7 +71,7 @@ export async function POST(request: NextRequest) {
       actions.push(`Warmed ${warmPaths.length} paths`)
     }
 
-    console.log(`🪝 Contentful webhook processed: ${actions.join(', ')}`)
+    console.log(`🪝 Hygraph webhook processed: ${actions.join(', ')}`)
 
     return NextResponse.json({
       received: true,
@@ -83,7 +80,7 @@ export async function POST(request: NextRequest) {
       warmedPaths: warmPaths
     })
   } catch (error) {
-    console.error('Contentful webhook error:', error)
+    console.error('Hygraph webhook error:', error)
     return NextResponse.json(
       { 
         message: 'Error processing webhook',

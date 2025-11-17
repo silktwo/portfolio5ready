@@ -46,18 +46,34 @@ export async function getCachedData<T>(
 
 // Warm cache by fetching data without storing
 export async function warmCache(paths: string[]): Promise<void> {
-  console.log(`🔥 Warming cache for paths: ${paths.join(', ')}`)
+  if (paths.length === 0) return
+  
+  console.log(`🔥 Warming cache for ${paths.length} paths: ${paths.join(', ')}`)
+  
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000'
   
   const warmPromises = paths.map(async (path) => {
     try {
-      await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}${path}`, {
-        cache: 'no-store'
+      const url = `${baseUrl}${path}`
+      const response = await fetch(url, {
+        cache: 'no-store',
+        headers: {
+          'User-Agent': 'CMS-Cache-Warmer/1.0'
+        }
       })
-      console.log(`✅ Warmed: ${path}`)
+      
+      if (response.ok) {
+        console.log(`✅ Warmed: ${path} (${response.status})`)
+      } else {
+        console.warn(`⚠️ Warmed with warning: ${path} (${response.status})`)
+      }
     } catch (error) {
-      console.warn(`⚠️ Failed to warm ${path}:`, error)
+      console.warn(`⚠️ Failed to warm ${path}:`, error instanceof Error ? error.message : 'Unknown error')
     }
   })
 
   await Promise.allSettled(warmPromises)
+  console.log(`🏁 Cache warming completed for ${paths.length} paths`)
 }
