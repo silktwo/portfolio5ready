@@ -7,7 +7,7 @@ import Footer from "@/components/footer"
 import { getPersonalProjects, type PersonalProject } from "@/lib/notion-projects"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 
-// Image Modal Component
+// Image Modal Component with full-screen display
 function ImageModal({
   images,
   currentIndex,
@@ -24,19 +24,23 @@ function ImageModal({
   onPrevious: () => void
 }) {
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
-      else if (e.key === "ArrowLeft") onPrevious()
-      else if (e.key === "ArrowRight") onNext()
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose()
+      } else if (e.key === "ArrowLeft") {
+        onPrevious()
+      } else if (e.key === "ArrowRight") {
+        onNext()
+      }
     }
 
     if (isOpen) {
-      document.addEventListener("keydown", handleKey)
+      document.addEventListener("keydown", handleEscape)
       document.body.style.overflow = "hidden"
     }
 
     return () => {
-      document.removeEventListener("keydown", handleKey)
+      document.removeEventListener("keydown", handleEscape)
       document.body.style.overflow = "unset"
     }
   }, [isOpen, onClose, onNext, onPrevious])
@@ -46,42 +50,55 @@ function ImageModal({
   const currentImage = images[currentIndex]
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center" onClick={onClose}>
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10 text-3xl font-light"
+      >
+        ×
+      </button>
+
+      {/* Previous button */}
+      {images.length > 1 && (
         <button
-          onClick={onClose}
-          className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors z-10"
+          onClick={(e) => {
+            e.stopPropagation()
+            onPrevious()
+          }}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 text-2xl bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center"
         >
-          <X className="w-6 h-6" />
+          ‹
         </button>
+      )}
 
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={(e) => { e.stopPropagation(); onPrevious() }}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); onNext() }}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded-full">
-              {currentIndex + 1} / {images.length}
-            </div>
-          </>
-        )}
+      {/* Next button */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onNext()
+          }}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 text-2xl bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center"
+        >
+          ›
+        </button>
+      )}
 
-        <img
-          src={currentImage.src || "/placeholder.svg"}
-          alt={currentImage.alt}
-          className="max-w-[calc(90vw-8rem)] max-h-[calc(90vh-8rem)] object-contain"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </div>
+      {/* Image counter */}
+      {images.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded-full">
+          {currentIndex + 1} / {images.length}
+        </div>
+      )}
+
+      <img
+        src={currentImage.src || "/placeholder.svg"}
+        alt={currentImage.alt}
+        className="max-w-[100vw] max-h-[100vh] object-contain block"
+        style={{ margin: 0, padding: 0 }}
+        onClick={(e) => e.stopPropagation()}
+      />
     </div>
   )
 }
