@@ -6,16 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start",
-    "vercel-build": "next build"
-  },
-  "pnpm": {
-    "overrides": {
-      "sharp": "^0.33.5"
-    },
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
+    "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

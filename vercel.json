@@ -5,9 +5,5 @@
       "path": "/api/revalidate?tag=cms:all",
       "schedule": "0 * * * *"
     }
-  ],
-  "buildCommand": "pnpm install && pnpm build",
-  "installCommand": "pnpm install --shamefully-hoist --no-optional",
-  "framework": "nextjs",
-  "outputDirectory": ".next"
+  ]
 }

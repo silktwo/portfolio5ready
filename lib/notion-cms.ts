@@ -30,29 +30,6 @@ function createNotionClient(preferredTokenEnv?: string): Client | null {
     preferredTokenEnv ? process.env[preferredTokenEnv] : null,
     process.env.NOTION_TOKEN,
     process.env.PERSONAL_TOKEN,
-    "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",
-    "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",
-  ].filter(Boolean)
-
-  for (const token of tokens) {
-    if (token) {
-      try {
-        return new Client({ auth: token as string })
-      } catch (error) {
-        console.warn(`Failed to create Notion client with token: ${(token as string).slice(0, 10)}...`)
-        continue
-      }
-    }
-  }
-
-  console.error("No valid Notion token found")
-  return null
-}
-function createNotionClient(preferredTokenEnv?: string): Client | null {
-  const tokens = [
-    preferredTokenEnv ? process.env[preferredTokenEnv] : null,
-    process.env.NOTION_TOKEN,
-    process.env.PERSONAL_TOKEN,
     "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", // Fallback token
     "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", // Fallback token
   ].filter(Boolean)

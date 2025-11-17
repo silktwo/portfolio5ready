@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation"
-import { Metadata } from "next"
 import WorkPageClient from "./WorkPageClient"
 import { getCaseBySlug, type CaseProject } from "@/lib/notion-cases"
 

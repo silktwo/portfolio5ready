@@ -167,14 +167,15 @@ export async function getCaseProjects(): Promise<{
     console.log("🔑 Using token:", token.substring(0, 10) + "...")
     console.log("🗄️ Using database ID:", databaseId)
 
-    // Import and create Notion client
+    // Import Notion client
     const { Client } = await import("@notionhq/client")
+
     const notion = new Client({
       auth: token,
       timeoutMs: 15000,
     })
 
-    console.log("📡 Querying Notion database...")
+    console.log("📡 Fetching from Notion database...")
 
     // Query the database
     const response = await notion.databases.query({
