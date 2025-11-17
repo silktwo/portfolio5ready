@@ -9,9 +9,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    esmExternals: 'loose'
-  },
   // Optimize for serverless deployment
   output: 'standalone',
 }
