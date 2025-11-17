@@ -17,12 +17,15 @@ export interface BlogPost {
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    const notion = createNotionClient(NOTION_CONFIG.BLOG_POSTS.TOKEN_ENV)
-    if (!notion) {
-      console.error("Failed to create Notion client for Blog Posts")
+    const { Client } = await import("@notionhq/client")
+    const token = process.env[NOTION_CONFIG.BLOG_POSTS.TOKEN_ENV] || process.env.NOTION_TOKEN
+    
+    if (!token) {
+      console.error("No Notion token found for Blog Posts")
       return []
     }
 
+    const notion = new Client({ auth: token })
     const response = await notion.databases.query({
       database_id: NOTION_CONFIG.BLOG_POSTS.DATABASE_ID,
       filter: {
