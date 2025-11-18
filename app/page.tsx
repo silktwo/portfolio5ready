@@ -141,10 +141,7 @@ export default function Home() {
       try {
         console.log("🔄 Fetching cases for homepage...")
         const response = await fetch("/api/cases", {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-          },
+          next: { revalidate: 1800 }
         })
 
         const result = await response.json()

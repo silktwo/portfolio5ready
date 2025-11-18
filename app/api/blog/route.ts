@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { getBlogPosts } from "@/lib/notion"
 
-export const dynamic = "force-dynamic" // No caching
+export const dynamic = "force-dynamic"
 
 export async function GET() {
   try {

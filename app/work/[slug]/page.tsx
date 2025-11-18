@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import WorkPageClient from "./WorkPageClient"
 import { getCaseBySlug, type CaseProject } from "@/lib/notion-cases"
+
+export const revalidate = 1800
 
 // Fallback projects for when database is not accessible
 const fallbackProjects: Record<string, any> = {

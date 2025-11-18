@@ -2,9 +2,8 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { getCachedData } from "@/lib/cache"
 import { type CaseProject } from "@/lib/notion-cases"
-import { DEFAULT_REVALIDATE } from "@/content.config"
 
-export const revalidate = DEFAULT_REVALIDATE
+export const revalidate = 1800
 
 export default async function WorkPage() {
   const projects = await getCachedData<CaseProject[]>('cases') as CaseProject[] || []

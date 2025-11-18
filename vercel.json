@@ -1,9 +1,0 @@
-
-{
-  "crons": [
-    {
-      "path": "/api/revalidate?tag=cms:all",
-      "schedule": "0 * * * *"
-    }
-  ]
-}
